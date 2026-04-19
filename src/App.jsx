@@ -1,0 +1,32 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import Layout from './components/Layout';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import ExamRoom from './pages/ExamRoom';
+import Results from './pages/Results';
+import Profile from './pages/Profile';
+import Calendar from './pages/Calendar';
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/exam/:testId/:sessionId" element={<ExamRoom />} />
+            <Route element={<Layout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/results/:testId" element={<Results />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}

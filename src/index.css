@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  :root {
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+  }
+  body { @apply font-sans antialiased; margin: 0; transition: background-color 0.2s, color 0.2s; overflow-x: hidden; width: 100%; position: relative; min-height: 100vh; min-height: 100dvh; padding-bottom: var(--safe-bottom); }
+  #root { min-height: 100vh; min-height: 100dvh; }
+  body.dark-theme  { background-color: #030712; color: #f9fafb; font-size: 14px; }
+  body.light-theme { background-color: #f1f5f9; color: #0f172a; font-size: 14px; }
+  @media (min-width: 768px) {
+    body.dark-theme, body.light-theme { font-size: 16px; }
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { border-radius: 999px; background: #4b5563; }
+
+  @media (max-width: 768px) {
+    button,
+    [role='button'],
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+}
+
+@layer components {
+  .card { border-radius: 0.75rem; padding: 1rem; border-width: 1px; border-style: solid; }
+  @media (min-width: 768px) {
+    .card { padding: 1.25rem; border-radius: 1rem; }
+  }
+  .dark-theme  .card  { background-color: #111827; border-color: #1f2937; }
+  .light-theme .card  { background-color: #ffffff;  border-color: #e2e8f0; box-shadow: 0 1px 3px rgb(0 0 0 / .06); }
+
+  .input { width: 100%; border-width: 1px; border-style: solid; border-radius: 0.5rem; padding: 0.5rem 0.75rem; outline: none; transition: border-color 0.15s; }
+  .dark-theme  .input { background-color: #1f2937; border-color: #374151; color: #f9fafb; }
+  .dark-theme  .input::placeholder { color: #6b7280; }
+  .dark-theme  .input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px #3b82f630; }
+  .light-theme .input { background-color: #ffffff;  border-color: #cbd5e1; color: #0f172a; }
+  .light-theme .input::placeholder { color: #94a3b8; }
+  .light-theme .input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px #2563eb20; }
+
+  .btn-primary  { @apply bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-secondary { @apply font-medium px-4 py-2 rounded-lg transition-all duration-200 border; }
+  .dark-theme  .btn-secondary { @apply bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700; }
+  .light-theme .btn-secondary { @apply bg-white hover:bg-gray-50 text-gray-700 border-gray-300 shadow-sm; }
+
+  .label { @apply block text-sm font-medium mb-1; }
+  .dark-theme  .label { @apply text-gray-300; }
+  .light-theme .label { @apply text-gray-700; }
+
+  .dark-theme .top-nav { background-color: #111827; border-color: #1f2937; }
+  .light-theme .top-nav { background-color: #ffffff;  border-color: #e2e8f0; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); }
+
+  .dark-theme  main { background-color: #030712; }
+  .light-theme main { background-color: #f8fafc; }
+
+  .badge-pass { @apply bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded-full font-medium; }
+  .badge-fail { @apply bg-red-100     text-red-700     text-xs px-2 py-0.5 rounded-full font-medium; }
+  .dark-theme .badge-pass { @apply bg-emerald-900/50 text-emerald-400; }
+  .dark-theme .badge-fail { @apply bg-red-900/50     text-red-400; }
+
+  .glass {
+    @apply transition-all duration-300;
+  }
+  .light-theme .glass {
+    @apply bg-white border border-slate-200/60 shadow-sm;
+  }
+  .dark-theme .glass {
+    @apply bg-gray-900/40 backdrop-blur-md border border-white/5 shadow-2xl;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 hover:-translate-y-0.5;
+  }
+
+  .stat-icon-box {
+    @apply w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-110;
+  }
+
+  /* Mobile Bottom Nav */
+  .mobile-nav-item {
+    @apply flex flex-col items-center justify-center py-2 px-1 text-[10px] font-black uppercase tracking-tighter transition-all duration-200 gap-1;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
