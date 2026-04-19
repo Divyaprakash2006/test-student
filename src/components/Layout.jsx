@@ -14,8 +14,8 @@ function Navbar() {
   return (
     <nav className={`top-nav border-b px-4 md:px-6 py-2.5 md:py-3 flex items-center justify-between sticky top-0 z-50 transition-colors`}>
       <div className="flex items-center gap-2 md:gap-2.5">
-        <div className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center overflow-hidden rounded-lg border shadow-sm ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
-          <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+        <div className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm border ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
+          <img src="/logo.png" alt="Logo" className="w-full h-full object-cover scale-110" />
         </div>
         <div className="flex items-baseline gap-1">
           <span className={`font-black text-xs md:text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>Test</span>
