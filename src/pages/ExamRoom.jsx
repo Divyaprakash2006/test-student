@@ -243,19 +243,19 @@ export default function ExamRoom() {
       `}</style>
       
       {/* Header */}
-      <div className={`px-4 md:px-6 py-3 md:py-4 flex items-center justify-between sticky top-0 z-20 border-b transition-colors ${isDark ? 'bg-gray-900 border-gray-800 shadow-lg shadow-black/20' : 'bg-white border-gray-200 shadow-sm'}`}>
+      <div className={`px-4 md:px-6 py-3 md:py-4 flex items-center justify-between sticky top-0 z-20 border-b transition-colors pt-[calc(0.75rem+var(--safe-top))] ${isDark ? 'bg-gray-900 border-gray-800 shadow-lg shadow-black/20' : 'bg-white border-gray-200 shadow-sm'}`}>
         <div className="flex items-center gap-2 md:gap-4">
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-primary-500/20 text-xs md:text-base">
             {test?.subject?.charAt(0) || 'E'}
           </div>
-          <div className="hidden sm:block">
-            <h1 className={`font-black text-[10px] md:text-sm uppercase tracking-wider leading-none ${isDark ? 'text-white' : 'text-slate-900'}`}>{test?.title}</h1>
+          <div className="flex flex-col">
+            <h1 className={`font-black text-[10px] md:text-sm uppercase tracking-wider leading-none ${isDark ? 'text-white' : 'text-slate-900'}`}>{test?.title?.substring(0, 15)}{test?.title?.length > 15 ? '...' : ''}</h1>
             <p className="text-[8px] md:text-[10px] font-bold text-gray-500 uppercase tracking-tighter mt-1">{test?.subject}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <Timer startTime={session?.startTime} duration={test?.duration || 30} scheduledDate={test?.scheduledDate} onExpire={onExpire} />
-          <button onClick={() => setShowConfirm(true)} className="btn-primary py-2 px-3 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-primary-600/20 transition-transform active:scale-95" disabled={submitting}>
+          <button onClick={() => setShowConfirm(true)} className="hidden xs:block btn-primary py-2 px-3 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-primary-600/20 transition-transform active:scale-95" disabled={submitting}>
             {submitting ? '...' : 'Submit'}
           </button>
           <button onClick={() => setShowPalette(true)} className="md:hidden p-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500">
@@ -456,12 +456,12 @@ export default function ExamRoom() {
           </div>
 
           {/* Static Navigation Footer */}
-          <div className={`border-t p-4 md:p-5 md:px-8 flex items-center justify-between z-10 transition-colors ${isDark ? 'bg-gray-900 border-gray-800 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]' : 'bg-white border-gray-100 shadow-xl'}`}>
+          <div className={`border-t p-4 md:p-5 md:px-8 flex items-center justify-between z-10 transition-colors pb-[calc(1rem+var(--safe-bottom))] md:pb-5 ${isDark ? 'bg-gray-900 border-gray-800 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]' : 'bg-white border-gray-100 shadow-xl'}`}>
             <button onClick={() => setCurrent(p => Math.max(0, p - 1))} disabled={current === 0} 
-              className={`btn-secondary py-2.5 md:py-3 px-4 md:px-8 text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 disabled:opacity-20 transition-all transform active:scale-95 ${
-                isDark ? 'hover:bg-gray-800' : 'hover:bg-slate-50'
+              className={`btn-secondary py-3 px-6 md:px-8 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 disabled:opacity-20 transition-all transform active:scale-95 hover:shadow-lg ${
+                isDark ? 'hover:bg-gray-800 border-gray-700' : 'hover:bg-slate-50 border-gray-200'
               }`}>
-              <ChevronLeft className="w-4 h-4" /> <span className="hidden xs:inline">Prev</span>
+              <ChevronLeft className="w-4 h-4" /> <span>Prev</span>
             </button>
             <div className="flex items-center gap-3 md:gap-6">
               <div className="hidden lg:flex flex-col items-end">
@@ -473,11 +473,11 @@ export default function ExamRoom() {
                 </span>
               </div>
               {current < questions.length - 1 ? (
-                <button onClick={() => setCurrent(p => p + 1)} className="btn-primary py-2.5 md:py-3 px-6 md:px-10 text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 shadow-2xl shadow-primary-600/30 transition-all transform active:scale-95">
+                <button onClick={() => setCurrent(p => p + 1)} className="btn-primary py-3 px-8 md:px-10 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 shadow-2xl shadow-primary-600/30 transition-all transform active:scale-95">
                   Next <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button onClick={() => setShowConfirm(true)} className="btn-primary py-2.5 md:py-3 px-6 md:px-10 text-[10px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 bg-emerald-600 hover:bg-emerald-700 border-emerald-500 shadow-2xl shadow-emerald-600/30 transition-all transform active:scale-95">
+                <button onClick={() => setShowConfirm(true)} className="btn-primary py-3 px-8 md:px-10 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 border-none shadow-2xl shadow-emerald-600/30 transition-all transform active:scale-95">
                   <Check className="w-4 h-4 font-black" /> Finish
                 </button>
               )}
