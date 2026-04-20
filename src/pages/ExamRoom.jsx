@@ -231,7 +231,7 @@ export default function ExamRoom() {
   const flaggedCount = Object.keys(flagged).filter(k => flagged[k]).length;
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
+    <div className={`h-screen flex flex-col transition-colors overflow-hidden ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -242,8 +242,8 @@ export default function ExamRoom() {
         }
       `}</style>
       
-      {/* Header */}
-      <div className={`px-4 md:px-6 py-3 md:py-4 flex items-center justify-between sticky top-0 z-20 border-b transition-colors pt-[calc(0.75rem+var(--safe-top))] ${isDark ? 'bg-gray-900 border-gray-800 shadow-lg shadow-black/20' : 'bg-white border-gray-200 shadow-sm'}`}>
+      {/* Header (Fixed) */}
+      <div className={`shrink-0 px-4 md:px-6 py-3 md:py-4 flex items-center justify-between border-b transition-colors pt-[calc(0.75rem+var(--safe-top))] ${isDark ? 'bg-gray-900 border-gray-800 shadow-lg shadow-black/20' : 'bg-white border-gray-200 shadow-sm'}`}>
         <div className="flex items-center gap-2 md:gap-4">
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary-600 to-indigo-600 flex items-center justify-center text-white font-black shadow-lg shadow-primary-500/20 text-xs md:text-base">
             {test?.subject?.charAt(0) || 'E'}
@@ -264,205 +264,227 @@ export default function ExamRoom() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* Question Area */}
-        <div className="flex-1 flex flex-col overflow-y-auto hide-scrollbar">
-          <div className="flex-1 p-3 md:p-6 flex flex-col items-center overflow-x-hidden">
-            {/* Progress */}
-            <div className="mb-6 w-full max-w-3xl mx-auto">
-              <div className="flex items-center justify-between mb-2 px-1">
-                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
-                  Question {current + 1} <span className="text-primary-500">/</span> {questions.length}
+      {/* Central Content (Row for Question + Sidebar) */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left Side: Question + Footer */}
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+          {/* Question Scroll Area */}
+          <div className="flex-1 overflow-y-auto hide-scrollbar bg-slate-50/50 dark:bg-gray-900/20">
+            <div className="w-full border-b bg-white dark:bg-gray-900 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/20">
+                  Q{current + 1}
                 </span>
-                <span className={`text-[9px] font-black uppercase tracking-[0.2em] ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
-                  {answeredCount} answered · {flaggedCount} flagged
+                <span className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                  {questionObj?.type?.replace('-', ' ')}
                 </span>
               </div>
-              <div className={`rounded-full h-1 border overflow-hidden transition-colors ${isDark ? 'bg-gray-800/50 border-gray-800' : 'bg-gray-100 border-gray-200'}`}>
-                <div className="bg-gradient-to-r from-primary-600 to-indigo-600 h-1 transition-all duration-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]" style={{ width: `${(answeredCount / questions.length) * 100}%` }} />
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end">
+                   <span className="text-[9px] font-black text-gray-400 uppercase tracking-tighter">Marks</span>
+                   <span className={`text-xs font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>+{questionObj?.marks || 1} / -0</span>
+                </div>
               </div>
             </div>
 
-            {/* Question Card */}
-            <div className={`w-full max-w-3xl mx-auto card p-5 md:p-8 space-y-5 md:space-y-6 shadow-xl transition-colors ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100 shadow-slate-200/50'}`}>
-              <div className="flex items-start justify-between gap-4 md:gap-6">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-3 md:mb-4">
-                    <span className={`px-2 py-0.5 rounded-lg text-[8px] md:text-[9px] font-black uppercase tracking-widest border transition-colors ${isDark ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
-                      {questionObj?.marks || 1} M
-                    </span>
-                    {flagged[qId] && (
-                      <span className="flex items-center gap-1.5 text-[8px] md:text-[9px] font-black text-amber-500 uppercase tracking-widest animate-pulse">
-                        <Flag className="w-2.5 h-2.5 fill-current" /> Flagged
-                      </span>
-                    )}
-                  </div>
-                  <p className={`text-lg md:text-2xl font-bold leading-tight whitespace-pre-wrap ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    {questionObj?.text || 'Loading...'}
-                  </p>
+            <div className="p-4 md:p-8 flex flex-col items-center">
+              {/* Progress (Mini) */}
+              <div className="mb-8 w-full max-w-4xl mx-auto flex items-center gap-4">
+                <div className={`flex-1 h-1.5 rounded-full overflow-hidden transition-colors ${isDark ? 'bg-gray-800' : 'bg-gray-200'}`}>
+                  <div className="bg-primary-500 h-full transition-all duration-500" style={{ width: `${(answeredCount / questions.length) * 100}%` }} />
                 </div>
-                <button onClick={() => toggleFlag(qId)} className={`p-2.5 md:p-3 rounded-xl transition-all shrink-0 border group ${
-                  flagged[qId] 
-                    ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/10' 
-                    : `${isDark ? 'bg-gray-800 border-gray-700 text-gray-500' : 'bg-slate-50 border-slate-200 text-slate-400'} hover:text-amber-500 hover:border-amber-500/30`
-                }`}>
-                  <Flag className={`w-4 h-4 md:w-5 md:h-5 ${flagged[qId] ? 'fill-current' : ''} group-hover:scale-110 transition-transform`} />
-                </button>
+                <span className="text-[10px] font-black text-gray-400 whitespace-nowrap uppercase tracking-widest">{Math.round((answeredCount / questions.length) * 100)}% Complete</span>
               </div>
 
-
-              {/* Answer Options */}
-              <div className="space-y-3">
-                {questionObj?.type === 'true-false' && ['True', 'False'].map(opt => (
-                  <button key={opt} onClick={() => handleAnswer(qId, opt)}
-                    className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center justify-between group active:scale-[0.99] ${
-                      answers[qId] === opt 
-                        ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-lg shadow-primary-500/5' 
-                        : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
-                    }`}>
-                    <span className="text-sm md:text-base font-bold">{opt}</span>
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                      answers[qId] === opt ? 'bg-primary-500 border-primary-500 scale-110 shadow-lg shadow-primary-500/30' : 'border-gray-300 dark:border-gray-700'
-                    }`}>
-                      {answers[qId] === opt && <Check className="w-3.5 h-3.5 text-white font-black" />}
-                    </div>
-                  </button>
-                ))}
-                {(questionObj?.type === 'mcq-single' || questionObj?.type === 'mcq-multi') && (questionObj?.options || []).map((opt, oi) => {
-                  const isSelected = questionObj?.type === 'mcq-multi'
-                    ? (Array.isArray(answers[qId]) ? answers[qId] : []).includes(opt)
-                    : answers[qId] === opt;
-                  return (
-                    <button key={oi} onClick={() => {
-                      if (questionObj?.type === 'mcq-multi') {
-                        const cur = Array.isArray(answers[qId]) ? answers[qId] : [];
-                        handleAnswer(qId, isSelected ? cur.filter(x => x !== opt) : [...cur, opt]);
-                      } else {
-                        handleAnswer(qId, opt);
-                      }
-                    }}
-                      className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center gap-3 md:gap-4 group active:scale-[0.99] ${
-                        isSelected 
-                          ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/5' 
-                          : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
-                      }`}>
-                      <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${questionObj?.type === 'mcq-multi' ? 'lg' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
-                        isSelected ? 'bg-primary-500 border-primary-500 scale-110 shadow-lg shadow-primary-500/30' : 'border-gray-300 dark:border-gray-700'
-                      }`}>
-                        {isSelected && <Check className="w-3 md:w-3.5 h-3 md:h-3.5 text-white font-black" />}
-                      </div>
-                      <span className="flex-1 text-sm md:text-base font-bold">{opt}</span>
-                    </button>
-                  );
-                })}
-                {(questionObj?.type === 'short-answer' || questionObj?.type === 'fill-blank') && (
-                  <div className="pt-2">
-                    <input className={`input text-lg py-4 px-6 transition-all border-2 rounded-2xl ${
-                      isDark ? 'bg-gray-900 border-gray-800 focus:border-primary-500' : 'bg-slate-50 border-gray-100 focus:border-primary-500 focus:bg-white text-slate-900'
-                    }`}
-                      placeholder={questionObj?.type === 'fill-blank' ? 'Type the missing word...' : 'Type your answer here...'}
-                      value={answers[qId] || ''}
-                      onChange={e => handleAnswer(qId, e.target.value)} />
-                  </div>
-                )}
-                {questionObj?.type === 'coding' && (
-                  <div className="space-y-4">
-                    {/* Coding logic remains the same but with better styling */}
-                    <div className="flex items-center justify-between gap-3">
-                      <select className="input w-48 text-sm py-2 bg-gray-900 border-gray-800" 
-                        value={answers[qId]?.language || questionObj?.allowedLanguages?.[0] || 'javascript'}
-                        onChange={e => {
-                          const lang = e.target.value;
-                          const currentCode = answers[qId]?.code || '';
-                          const nextCode = currentCode.trim() === '' ? (TEMPLATES[lang] || '') : currentCode;
-                          handleAnswer(qId, { code: nextCode, language: lang });
-                        }}>
-                        {(questionObj?.allowedLanguages || ['javascript', 'python', 'java', 'cpp']).map(l => (
-                          <option key={l} value={l}>{l.toUpperCase()}</option>
-                        ))}
-                      </select>
-                      <button 
-                        onClick={() => handleRunCode(qId, answers[qId]?.code, answers[qId]?.language || questionObj?.allowedLanguages?.[0] || 'javascript')}
-                        disabled={running || !answers[qId]?.code}
-                        className="btn-primary py-2 px-6 text-sm flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-primary-600/20"
-                      >
-                        <Play className={`w-4 h-4 ${running ? 'animate-spin' : ''}`} />
-                        {running ? 'Running...' : 'Run Code'}
-                      </button>
-                    </div>
-                    <textarea className="input font-mono text-sm min-h-[400px] resize-y bg-[#0d1117] border-gray-800 text-gray-200 p-4 focus:ring-1 focus:ring-primary-500/50" 
-                      placeholder="Write your code here..."
-                      spellCheck="false"
-                      value={answers[qId]?.code || ''}
-                      onChange={e => handleAnswer(qId, { ...(answers[qId] || { language: questionObj?.allowedLanguages?.[0] || 'javascript' }), code: e.target.value })} />
-                    
-                    {/* Manual Input Section */}
-                    <div className="p-5 rounded-2xl border border-gray-800 bg-gray-900/30">
-                      <label className="flex items-center gap-2 cursor-pointer mb-4 group w-fit">
-                        <input type="checkbox" className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-primary-500 focus:ring-primary-500/20 transition-all group-hover:border-primary-500/50" 
-                          checked={useManualInput} onChange={e => setUseManualInput(e.target.checked)} />
-                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-gray-300 uppercase tracking-widest transition-colors">Use Custom Test Input</span>
-                      </label>
-                      {useManualInput && (
-                        <textarea className="input font-mono text-xs min-h-[100px] bg-black/40 border-gray-800 text-gray-300 w-full focus:bg-black/60 transition-all" 
-                          placeholder="Enter input to pass to your program (stdin)..."
-                          value={manualInputText} onChange={e => setManualInputText(e.target.value)} />
+              {/* Question Card */}
+              <div className={`w-full max-w-3xl mx-auto card p-5 md:p-8 space-y-5 md:space-y-6 shadow-xl transition-colors ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100 shadow-slate-200/50'}`}>
+                <div className="flex items-start justify-between gap-4 md:gap-6">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-3 md:mb-4">
+                      <span className={`px-2 py-0.5 rounded-lg text-[8px] md:text-[9px] font-black uppercase tracking-widest border transition-colors ${isDark ? 'bg-gray-800 border-gray-700 text-gray-400' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
+                        {questionObj?.marks || 1} M
+                      </span>
+                      {flagged[qId] && (
+                        <span className="flex items-center gap-1.5 text-[8px] md:text-[9px] font-black text-amber-500 uppercase tracking-widest animate-pulse">
+                          <Flag className="w-2.5 h-2.5 fill-current" /> Flagged
+                        </span>
                       )}
                     </div>
-                    
-                    {/* Execution Results */}
-                    {runResults && (
-                      <div className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-                        <div className="bg-gray-800/30 px-5 py-3 border-b border-gray-800 flex items-center gap-2">
-                          <Terminal className="w-4 h-4 text-primary-400" />
-                          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Console Output</span>
-                        </div>
-                        <div className="p-5 space-y-5">
-                          {runResults.map((r, ri) => (
-                            <div key={ri} className={`p-4 rounded-xl border-l-4 ${r.isDryRun ? (r.error ? 'bg-red-950/10 border-red-600' : 'bg-blue-950/10 border-blue-600') : (r.isCorrect ? 'bg-emerald-950/10 border-emerald-600' : 'bg-red-950/10 border-red-600')}`}>
-                              <div className="flex items-center justify-between mb-3">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{r.isDryRun ? 'Custom Input Result' : `Test Case ${ri + 1}`}</span>
-                                <span className={`text-[10px] font-black px-2.5 py-1 rounded-md ${r.isDryRun ? (r.error ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400') : (r.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400')}`}>
-                                  {r.isDryRun ? (r.error ? 'ERROR' : 'SUCCESS') : (r.isCorrect ? 'PASSED' : 'FAILED')}
-                                </span>
-                              </div>
-                              {!r.isDryRun && (
-                                <div className="grid grid-cols-2 gap-6 text-[11px] mb-4">
-                                  <div>
-                                    <p className="text-gray-500 font-bold uppercase tracking-tighter mb-1.5 opacity-60">Input</p>
-                                    <code className="bg-black/40 px-3 py-2 rounded-lg block border border-gray-800 shadow-inner">{r.input || '(empty)'}</code>
-                                  </div>
-                                  <div>
-                                    <p className="text-gray-500 font-bold uppercase tracking-tighter mb-1.5 opacity-60">Expected</p>
-                                    <code className="bg-black/40 px-3 py-2 rounded-lg block border border-gray-800 shadow-inner">{r.expected}</code>
-                                  </div>
-                                </div>
-                              )}
-                              <div>
-                                <p className="text-gray-500 font-bold uppercase tracking-tighter text-[10px] mb-1.5 opacity-60">{r.error ? 'Error Details' : 'Actual Output'}</p>
-                                <pre className={`p-3 rounded-lg text-xs font-mono whitespace-pre-wrap border ${r.error ? 'text-red-400 bg-red-950/20 border-red-900/30' : 'text-gray-300 bg-black/50 border-gray-800 shadow-inner'}`}>
-                                  {r.error || r.actual || '(no output)'}
-                                </pre>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    <p className={`text-lg md:text-2xl font-bold leading-tight whitespace-pre-wrap ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      {questionObj?.text || 'Loading...'}
+                    </p>
                   </div>
-                )}
+                  <button onClick={() => toggleFlag(qId)} className={`p-2.5 md:p-3 rounded-xl transition-all shrink-0 border group ${
+                    flagged[qId] 
+                      ? 'bg-amber-500/10 border-amber-500/50 text-amber-400 shadow-lg shadow-amber-500/10' 
+                      : `${isDark ? 'bg-gray-800 border-gray-700 text-gray-500' : 'bg-slate-50 border-slate-200 text-slate-400'} hover:text-amber-500 hover:border-amber-500/30`
+                  }`}>
+                    <Flag className={`w-4 h-4 md:w-5 md:h-5 ${flagged[qId] ? 'fill-current' : ''} group-hover:scale-110 transition-transform`} />
+                  </button>
+                </div>
+
+
+                {/* Answer Options */}
+                <div className="space-y-3">
+                  {questionObj?.type === 'true-false' && ['True', 'False'].map(opt => (
+                    <button key={opt} onClick={() => handleAnswer(qId, opt)}
+                      className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center justify-between group active:scale-[0.99] ${
+                        answers[qId] === opt 
+                          ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-lg shadow-primary-500/5' 
+                          : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
+                      }`}>
+                      <span className="text-sm md:text-base font-bold">{opt}</span>
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                        answers[qId] === opt ? 'bg-primary-500 border-primary-500 scale-110 shadow-lg shadow-primary-500/30' : 'border-gray-300 dark:border-gray-700'
+                      }`}>
+                        {answers[qId] === opt && <Check className="w-3.5 h-3.5 text-white font-black" />}
+                      </div>
+                    </button>
+                  ))}
+                  {(questionObj?.type === 'mcq-single' || questionObj?.type === 'mcq-multi') && (questionObj?.options || []).map((opt, oi) => {
+                    const isSelected = questionObj?.type === 'mcq-multi'
+                      ? (Array.isArray(answers[qId]) ? answers[qId] : []).includes(opt)
+                      : answers[qId] === opt;
+                    return (
+                      <button key={oi} onClick={() => {
+                        if (questionObj?.type === 'mcq-multi') {
+                          const cur = Array.isArray(answers[qId]) ? answers[qId] : [];
+                          handleAnswer(qId, isSelected ? cur.filter(x => x !== opt) : [...cur, opt]);
+                        } else {
+                          handleAnswer(qId, opt);
+                        }
+                      }}
+                        className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center gap-3 md:gap-4 group active:scale-[0.99] ${
+                          isSelected 
+                            ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/5' 
+                            : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
+                        }`}>
+                        <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${questionObj?.type === 'mcq-multi' ? 'lg' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
+                          isSelected ? 'bg-primary-500 border-primary-500 scale-110 shadow-lg shadow-primary-500/30' : 'border-gray-300 dark:border-gray-700'
+                        }`}>
+                          {isSelected && <Check className="w-3 md:w-3.5 h-3 md:h-3.5 text-white font-black" />}
+                        </div>
+                        <span className="flex-1 text-sm md:text-base font-bold">{opt}</span>
+                      </button>
+                    );
+                  })}
+                  {(questionObj?.type === 'short-answer' || questionObj?.type === 'fill-blank') && (
+                    <div className="pt-2">
+                      <input className={`input text-lg py-4 px-6 transition-all border-2 rounded-2xl ${
+                        isDark ? 'bg-gray-900 border-gray-800 focus:border-primary-500' : 'bg-slate-50 border-gray-100 focus:border-primary-500 focus:bg-white text-slate-900'
+                      }`}
+                        placeholder={questionObj?.type === 'fill-blank' ? 'Type the missing word...' : 'Type your answer here...'}
+                        value={answers[qId] || ''}
+                        onChange={e => handleAnswer(qId, e.target.value)} />
+                    </div>
+                  )}
+                  {questionObj?.type === 'coding' && (
+                    <div className="space-y-4">
+                      {/* Coding logic remains the same but with better styling */}
+                      <div className="flex items-center justify-between gap-3">
+                        <select className="input w-48 text-sm py-2 bg-gray-900 border-gray-800" 
+                          value={answers[qId]?.language || questionObj?.allowedLanguages?.[0] || 'javascript'}
+                          onChange={e => {
+                            const lang = e.target.value;
+                            const currentCode = answers[qId]?.code || '';
+                            const nextCode = currentCode.trim() === '' ? (TEMPLATES[lang] || '') : currentCode;
+                            handleAnswer(qId, { code: nextCode, language: lang });
+                          }}>
+                          {(questionObj?.allowedLanguages || ['javascript', 'python', 'java', 'cpp']).map(l => (
+                            <option key={l} value={l}>{l.toUpperCase()}</option>
+                          ))}
+                        </select>
+                        <button 
+                          onClick={() => handleRunCode(qId, answers[qId]?.code, answers[qId]?.language || questionObj?.allowedLanguages?.[0] || 'javascript')}
+                          disabled={running || !answers[qId]?.code}
+                          className="btn-primary py-2 px-6 text-sm flex items-center gap-2 disabled:opacity-50 shadow-lg shadow-primary-600/20"
+                        >
+                          <Play className={`w-4 h-4 ${running ? 'animate-spin' : ''}`} />
+                          {running ? 'Running...' : 'Run Code'}
+                        </button>
+                      </div>
+                      <textarea className="input font-mono text-sm min-h-[400px] resize-y bg-[#0d1117] border-gray-800 text-gray-200 p-4 focus:ring-1 focus:ring-primary-500/50" 
+                        placeholder="Write your code here..."
+                        spellCheck="false"
+                        value={answers[qId]?.code || ''}
+                        onChange={e => handleAnswer(qId, { ...(answers[qId] || { language: questionObj?.allowedLanguages?.[0] || 'javascript' }), code: e.target.value })} />
+                      
+                      {/* Manual Input Section */}
+                      <div className="p-5 rounded-2xl border border-gray-800 bg-gray-900/30">
+                        <label className="flex items-center gap-2 cursor-pointer mb-4 group w-fit">
+                          <input type="checkbox" className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-primary-500 focus:ring-primary-500/20 transition-all group-hover:border-primary-500/50" 
+                            checked={useManualInput} onChange={e => setUseManualInput(e.target.checked)} />
+                          <span className="text-[10px] font-bold text-gray-400 group-hover:text-gray-300 uppercase tracking-widest transition-colors">Use Custom Test Input</span>
+                        </label>
+                        {useManualInput && (
+                          <textarea className="input font-mono text-xs min-h-[100px] bg-black/40 border-gray-800 text-gray-300 w-full focus:bg-black/60 transition-all" 
+                            placeholder="Enter input to pass to your program (stdin)..."
+                            value={manualInputText} onChange={e => setManualInputText(e.target.value)} />
+                        )}
+                      </div>
+                      
+                      {/* Execution Results */}
+                      {runResults && (
+                        <div className="bg-gray-900/80 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
+                          <div className="bg-gray-800/30 px-5 py-3 border-b border-gray-800 flex items-center gap-2">
+                            <Terminal className="w-4 h-4 text-primary-400" />
+                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-[2px]">Console Output</span>
+                          </div>
+                          <div className="p-5 space-y-5">
+                            {runResults.map((r, ri) => (
+                              <div key={ri} className={`p-4 rounded-xl border-l-4 ${r.isDryRun ? (r.error ? 'bg-red-950/10 border-red-600' : 'bg-blue-950/10 border-blue-600') : (r.isCorrect ? 'bg-emerald-950/10 border-emerald-600' : 'bg-red-950/10 border-red-600')}`}>
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{r.isDryRun ? 'Custom Input Result' : `Test Case ${ri + 1}`}</span>
+                                  <span className={`text-[10px] font-black px-2.5 py-1 rounded-md ${r.isDryRun ? (r.error ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400') : (r.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400')}`}>
+                                    {r.isDryRun ? (r.error ? 'ERROR' : 'SUCCESS') : (r.isCorrect ? 'PASSED' : 'FAILED')}
+                                  </span>
+                                </div>
+                                {!r.isDryRun && (
+                                  <div className="grid grid-cols-2 gap-6 text-[11px] mb-4">
+                                    <div>
+                                      <p className="text-gray-500 font-bold uppercase tracking-tighter mb-1.5 Municipality opacity-60">Input</p>
+                                      <code className="bg-black/40 px-3 py-2 rounded-lg block border border-gray-800 shadow-inner">{r.input || '(empty)'}</code>
+                                    </div>
+                                    <div>
+                                      <p className="text-gray-500 font-bold uppercase tracking-tighter mb-1.5 opacity-60">Expected</p>
+                                      <code className="bg-black/40 px-3 py-2 rounded-lg block border border-gray-800 shadow-inner">{r.expected}</code>
+                                    </div>
+                                  </div>
+                                )}
+                                <div>
+                                  <p className="text-gray-500 font-bold uppercase tracking-tighter text-[10px] mb-1.5 opacity-60">{r.error ? 'Error Details' : 'Actual Output'}</p>
+                                  <pre className={`p-3 rounded-lg text-xs font-mono whitespace-pre-wrap border ${r.error ? 'text-red-400 bg-red-950/20 border-red-900/30' : 'text-gray-300 bg-black/50 border-gray-800 shadow-inner'}`}>
+                                    {r.error || r.actual || '(no output)'}
+                                  </pre>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Static Navigation Footer */}
-          <div className={`border-t p-4 md:p-5 md:px-8 flex items-center justify-between z-10 transition-colors pb-[calc(1rem+var(--safe-bottom))] md:pb-5 ${isDark ? 'bg-gray-900 border-gray-800 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]' : 'bg-white border-gray-100 shadow-xl'}`}>
-            <button onClick={() => setCurrent(p => Math.max(0, p - 1))} disabled={current === 0} 
-              className={`btn-secondary py-3 px-6 md:px-8 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 disabled:opacity-20 transition-all transform active:scale-95 hover:shadow-lg ${
-                isDark ? 'hover:bg-gray-800 border-gray-700' : 'hover:bg-slate-50 border-gray-200'
-              }`}>
-              <ChevronLeft className="w-4 h-4" /> <span>Prev</span>
-            </button>
+          {/* Fixed Navigation Footer */}
+          <div className={`shrink-0 border-t p-4 md:px-8 flex items-center justify-between z-10 transition-colors pb-[calc(1rem+var(--safe-bottom))] md:pb-5 ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100 shadow-2xl'}`}>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setCurrent(p => Math.max(0, p - 1))} disabled={current === 0} 
+                className={`btn-secondary py-3 px-6 md:px-8 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 disabled:opacity-20 transition-all transform active:scale-95 ${
+                  isDark ? 'hover:bg-gray-800 border-gray-700' : 'hover:bg-slate-50 border-gray-200 shadow-sm'
+                }`}>
+                <ChevronLeft className="w-4 h-4" /> <span>Previous</span>
+              </button>
+              <button 
+                onClick={() => handleAnswer(qId, undefined)}
+                className={`hidden lg:flex btn-secondary py-3 px-6 text-[10px] font-black uppercase tracking-widest items-center gap-2 border-dashed ${isDark ? 'text-gray-500 border-gray-800' : 'text-slate-400 border-slate-200'}`}
+              >
+                <X className="w-3.5 h-3.5" /> Clear Response
+              </button>
+            </div>
             <div className="flex items-center gap-3 md:gap-6">
               <div className="hidden lg:flex flex-col items-end">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-[3px] mb-0.5">Next up</span>
@@ -485,8 +507,8 @@ export default function ExamRoom() {
           </div>
         </div>
 
-        {/* Question Palette Sidebar (Responsive) */}
-        <div className={`fixed inset-0 z-50 md:relative md:inset-auto md:flex w-full md:w-80 shrink-0 border-l transition-all duration-300 ${showPalette ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} ${isDark ? 'bg-[#0f172a] border-gray-800' : 'bg-slate-50 border-gray-200'}`}>
+        {/* Question Palette Sidebar (Fixed Desktop, Responsive Drawer Mobile) */}
+        <div className={`fixed inset-0 z-50 md:relative md:inset-auto md:flex w-full md:w-80 shrink-0 border-l transition-all duration-300 h-full ${showPalette ? 'translate-x-0' : 'translate-x-full md:translate-x-0'} ${isDark ? 'bg-[#0f172a] border-gray-800' : 'bg-slate-50 border-gray-200'}`}>
           {showPalette && <div className="absolute inset-0 bg-black/60 md:hidden" onClick={() => setShowPalette(false)} />}
           
           <div className={`relative w-72 h-full ml-auto md:ml-0 md:w-full flex flex-col overflow-hidden shadow-2xl md:shadow-none ${isDark ? 'bg-[#0f172a]' : 'bg-slate-50'}`}>
