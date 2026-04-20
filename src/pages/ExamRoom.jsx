@@ -289,7 +289,7 @@ export default function ExamRoom() {
 
             <div className="p-4 md:p-8 flex flex-col items-center">
               {/* Progress (Mini) */}
-              <div className="mb-8 w-full max-w-lg md:max-w-xl lg:max-w-2xl mx-auto flex items-center gap-4">
+              <div className="mb-6 w-full max-w-3xl md:max-w-4xl lg:max-w-5xl mx-auto flex items-center gap-4">
                 <div className={`flex-1 h-1.5 rounded-full overflow-hidden transition-colors ${isDark ? 'bg-gray-800' : 'bg-gray-200'}`}>
                   <div className="bg-primary-500 h-full transition-all duration-500" style={{ width: `${(answeredCount / questions.length) * 100}%` }} />
                 </div>
@@ -297,7 +297,7 @@ export default function ExamRoom() {
               </div>
 
               {/* Question Card */}
-              <div className={`w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto card p-5 md:p-8 space-y-5 md:space-y-6 shadow-xl transition-colors ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100 shadow-slate-200/50'}`}>
+              <div className={`w-full max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto card p-4 md:p-5 space-y-3 md:space-y-4 shadow-xl transition-colors ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100 shadow-slate-200/50'}`}>
                 <div className="flex items-start justify-between gap-4 md:gap-6">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-3 md:mb-4">
