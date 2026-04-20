@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { HiBell, HiOutlineBell, HiCheckCircle, HiCalendar, HiAcademicCap } from 'react-icons/hi2';
+import { HiBell, HiOutlineBell, HiCheckCircle, HiCalendar, HiAcademicCap, HiTrash } from 'react-icons/hi2';
 import { useNotifications } from '../context/NotificationContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function NotificationBell() {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, clearNotifications } = useNotifications();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [isOpen, setIsOpen] = useState(false);
@@ -69,15 +69,26 @@ export default function NotificationBell() {
         }`}>
           <div className={`px-4 py-3 border-b flex items-center justify-between ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
             <h3 className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Notifications</h3>
-            {unreadCount > 0 && (
-              <button
-                onClick={() => { markAllAsRead(); setIsOpen(false); }}
-                className="text-xs font-semibold text-primary-500 hover:text-primary-600 flex items-center gap-1"
-              >
-                <HiCheckCircle className="w-4 h-4" />
-                Mark all read
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {unreadCount > 0 && (
+                <button
+                  onClick={() => { markAllAsRead(); }}
+                  className="text-xs font-semibold text-primary-500 hover:text-primary-600 flex items-center gap-1"
+                >
+                  <HiCheckCircle className="w-4 h-4" />
+                  Mark all read
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  onClick={() => { if (window.confirm('Clear all notifications?')) { clearNotifications(); setIsOpen(false); } }}
+                  className="text-xs font-semibold text-red-500 hover:text-red-600 flex items-center gap-1"
+                >
+                  <HiTrash className="w-4 h-4" />
+                  Clear
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
