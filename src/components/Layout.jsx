@@ -3,6 +3,7 @@ import { Navigate, Outlet, useNavigate, NavLink, useLocation } from 'react-route
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { LogOut, Home, User, Sun, Moon, ChevronDown, BarChart3, Calendar } from 'lucide-react';
+import NotificationBell from './NotificationBell';
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -40,6 +41,8 @@ function Navbar() {
         <button onClick={toggle} className={`md:hidden p-2 rounded-xl border transition-colors ${isDark ? 'bg-gray-800 border-gray-700 text-amber-400' : 'bg-white border-gray-200 text-slate-500'}`}>
           {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
         </button>
+        
+        <NotificationBell />
 
         <div className="relative">
           <button 
