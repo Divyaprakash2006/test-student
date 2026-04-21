@@ -104,27 +104,6 @@ function TestTable({ tests, type, title, onStart, navigate, isDark }) {
                     </button>
                   ) : (
                     <>
-                      {test.attempts > 0 && (
-                        <div className="space-y-2 mb-2">
-                           <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2">Attempt History</p>
-                           <div className={`max-h-24 overflow-y-auto rounded-xl border p-2 space-y-2 ${isDark ? 'border-gray-800 bg-gray-900/20' : 'border-gray-100 bg-gray-50/30'}`}>
-                             {test.results.map((res, ri) => (
-                               <div key={ri} className="flex items-center justify-between gap-4 group/res">
-                                 <div className="flex flex-col">
-                                   <span className={`text-[10px] font-bold ${isDark ? 'text-gray-300' : 'text-slate-700'}`}>Attempt {res.attemptNumber || (test.attempts - ri)}</span>
-                                   <span className="text-[8px] text-gray-400">{new Date(res.createdAt).toLocaleDateString()}</span>
-                                 </div>
-                                 <div className="flex items-center gap-3">
-                                   <span className={`text-[10px] font-black ${res.passed ? 'text-emerald-500' : 'text-red-500'}`}>{res.percentage}%</span>
-                                   <button onClick={() => navigate(`/results/${test._id}`)} className="p-1 hover:bg-primary-500/10 rounded transition-colors">
-                                     <Eye className="w-3 h-3 text-primary-400" />
-                                   </button>
-                                 </div>
-                               </div>
-                             ))}
-                           </div>
-                        </div>
-                      )}
                       <button onClick={() => !isLocked && onStart(test._id)} disabled={isLocked}
                         className={`w-full h-12 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl ${
                           isLocked 

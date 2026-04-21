@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://test-backend-8l27.onrender.com/api';
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+  ? '/api' 
+  : 'https://test-backend-8l27.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

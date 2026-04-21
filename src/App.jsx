@@ -10,6 +10,7 @@ import ExamRoom from './pages/ExamRoom';
 import Results from './pages/Results';
 import Profile from './pages/Profile';
 import Calendar from './pages/Calendar';
+import History from './pages/History';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
               <Route element={<Layout />}>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/calendar" element={<Calendar />} />
+                <Route path="/history" element={<History />} />
                 <Route path="/results/:testId" element={<Results />} />
                 <Route path="/profile" element={<Profile />} />
               </Route>

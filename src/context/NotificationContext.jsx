@@ -36,11 +36,14 @@ export function NotificationProvider({ children }) {
     fetchNotifications();
 
     // Socket connection
-    const socketUrl = import.meta.env.VITE_API_BASE_URL 
-      ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') 
+    const socketUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? '/' 
       : 'https://test-backend-8l27.onrender.com';
     
-    const newSocket = io(socketUrl);
+    const newSocket = io(socketUrl, {
+      transports: ['polling', 'websocket'],
+      upgrade: true
+    });
     setSocket(newSocket);
 
     newSocket.on('connect', () => {

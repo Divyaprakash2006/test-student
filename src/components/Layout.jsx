@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Navigate, Outlet, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LogOut, Home, User, Sun, Moon, ChevronDown, BarChart3, Calendar } from 'lucide-react';
+import { LogOut, Home, User, Sun, Moon, ChevronDown, BarChart3, Calendar, History as HistoryIcon } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 
 function Navbar() {
@@ -33,6 +33,10 @@ function Navbar() {
         <NavLink to="/calendar" className={({ isActive }) =>
           `px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 border ${isActive ? 'bg-primary-600/10 text-primary-600 border-primary-600/20 shadow-lg shadow-primary-600/5' : isDark ? 'text-gray-400 border-transparent hover:text-white hover:bg-gray-800' : 'text-gray-500 border-transparent hover:text-gray-900 hover:bg-gray-100'}`}>
           <span className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"><Calendar className="w-4 h-4" /> Calendar</span>
+        </NavLink>
+        <NavLink to="/history" className={({ isActive }) =>
+          `px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 border ${isActive ? 'bg-primary-600/10 text-primary-600 border-primary-600/20 shadow-lg shadow-primary-600/5' : isDark ? 'text-gray-400 border-transparent hover:text-white hover:bg-gray-800' : 'text-gray-500 border-transparent hover:text-gray-900 hover:bg-gray-100'}`}>
+          <span className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"><HistoryIcon className="w-4 h-4" /> History</span>
         </NavLink>
       </div>
 
@@ -135,7 +139,7 @@ function BottomNav() {
         <User className="w-5 h-5 mb-0.5" />
         <span className="text-[8px]">Profile</span>
       </NavLink>
-      <NavLink to="/results" className={({ isActive }) =>
+      <NavLink to="/history" className={({ isActive }) =>
         `mobile-nav-item flex-1 ${isActive ? 'text-primary-500 scale-110' : 'text-gray-400 hover:text-gray-200'}`}>
         <BarChart3 className="w-5 h-5 mb-0.5" />
         <span className="text-[8px]">History</span>

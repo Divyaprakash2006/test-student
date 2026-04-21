@@ -15,6 +15,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      '/socket.io': {
+        target: 'https://test-backend-8l27.onrender.com',
+        ws: true,
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 })

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { HiBell, HiOutlineBell, HiCheckCircle, HiCalendar, HiAcademicCap, HiTrash } from 'react-icons/hi2';
+import { Bell, CheckCircle2, Calendar, GraduationCap, Trash2 } from 'lucide-react';
 import { useNotifications } from '../context/NotificationContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -22,9 +22,9 @@ export default function NotificationBell() {
 
   const getIcon = (type) => {
     switch (type) {
-      case 'enrolled': return <HiAcademicCap className="w-5 h-5 text-primary-500" />;
-      case 'test_created': return <HiCalendar className="w-5 h-5 text-violet-500" />;
-      default: return <HiBell className="w-5 h-5 text-amber-500" />;
+      case 'enrolled': return <GraduationCap className="w-5 h-5 text-primary-500" />;
+      case 'test_created': return <Calendar className="w-5 h-5 text-violet-500" />;
+      default: return <Bell className="w-5 h-5 text-amber-500" />;
     }
   };
 
@@ -47,9 +47,9 @@ export default function NotificationBell() {
         } ${isOpen ? (isDark ? 'bg-gray-800' : 'bg-gray-100') : ''}`}
       >
         {unreadCount > 0 ? (
-          <HiBell className={`w-6 h-6 ${isDark ? 'text-primary-400' : 'text-primary-600'}`} />
+          <Bell className={`w-6 h-6 fill-current ${isDark ? 'text-primary-400' : 'text-primary-600'}`} />
         ) : (
-          <HiOutlineBell className="w-6 h-6" />
+          <Bell className="w-6 h-6" />
         )}
         
         {unreadCount > 0 && (
@@ -75,7 +75,7 @@ export default function NotificationBell() {
                   onClick={() => { markAllAsRead(); }}
                   className="text-xs font-semibold text-primary-500 hover:text-primary-600 flex items-center gap-1"
                 >
-                  <HiCheckCircle className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4" />
                   Mark all read
                 </button>
               )}
@@ -84,7 +84,7 @@ export default function NotificationBell() {
                   onClick={() => { if (window.confirm('Clear all notifications?')) { clearNotifications(); setIsOpen(false); } }}
                   className="text-xs font-semibold text-red-500 hover:text-red-600 flex items-center gap-1"
                 >
-                  <HiTrash className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" />
                   Clear
                 </button>
               )}
@@ -95,7 +95,7 @@ export default function NotificationBell() {
             {notifications.length === 0 ? (
               <div className="py-12 px-4 flex flex-col items-center justify-center gap-3">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isDark ? 'bg-gray-800' : 'bg-gray-50'}`}>
-                  <HiBell className={`w-6 h-6 ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
+                  <Bell className={`w-6 h-6 ${isDark ? 'text-gray-600' : 'text-gray-300'}`} />
                 </div>
                 <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>No notifications yet</p>
               </div>
