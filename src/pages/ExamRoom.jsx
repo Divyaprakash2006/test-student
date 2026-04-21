@@ -291,9 +291,16 @@ export default function ExamRoom() {
                 <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/20">
                   Q{current + 1}
                 </span>
-                <span className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
-                  {questionObj?.type?.replace('-', ' ')}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] font-black uppercase tracking-[2px] ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                    {questionObj?.type?.replace('-', ' ')}
+                  </span>
+                  {questionObj?.type === 'mcq-multi' && (
+                    <span className="text-[8px] font-black px-2 py-0.5 rounded bg-primary-500/10 text-primary-500 border border-primary-500/20 uppercase tracking-widest animate-pulse">
+                      Select all that apply
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex flex-col items-end">
@@ -357,33 +364,41 @@ export default function ExamRoom() {
                       </div>
                     </button>
                   ))}
-                  {(questionObj?.type === 'mcq-single' || questionObj?.type === 'mcq-multi') && (shuffledOptionsMap[qId] || questionObj?.options || []).map((opt, oi) => {
-                    const isSelected = questionObj?.type === 'mcq-multi'
-                      ? (Array.isArray(answers[qId]) ? answers[qId] : []).includes(opt)
-                      : answers[qId] === opt;
-                    return (
-                      <button key={oi} onClick={() => {
-                        if (questionObj?.type === 'mcq-multi') {
-                          const cur = Array.isArray(answers[qId]) ? answers[qId] : [];
-                          handleAnswer(qId, isSelected ? cur.filter(x => x !== opt) : [...cur, opt]);
-                        } else {
-                          handleAnswer(qId, opt);
-                        }
-                      }}
-                        className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center gap-3 md:gap-4 group active:scale-[0.99] ${
-                          isSelected 
-                            ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/5' 
-                            : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
-                        }`}>
-                        <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${questionObj?.type === 'mcq-multi' ? 'lg' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
-                          isSelected ? 'bg-primary-500 border-primary-500 scale-110 shadow-lg shadow-primary-500/30' : 'border-gray-300 dark:border-gray-700'
-                        }`}>
-                          {isSelected && <Check className="w-3 md:w-3.5 h-3 md:h-3.5 text-white font-black" />}
-                        </div>
-                        <span className="flex-1 text-sm md:text-base font-bold">{opt}</span>
-                      </button>
-                    );
-                  })}
+                  {(questionObj?.type === 'mcq-single' || questionObj?.type === 'mcq-multi') && 
+                    (shuffledOptionsMap[qId] || questionObj?.options || [])
+                    .filter(opt => opt && opt.trim() !== '')
+                    .map((opt, oi) => {
+                      const isSelected = questionObj?.type === 'mcq-multi'
+                        ? (Array.isArray(answers[qId]) ? answers[qId] : []).includes(opt)
+                        : answers[qId] === opt;
+                      const isMulti = questionObj?.type === 'mcq-multi';
+                      return (
+                        <button key={oi} onClick={() => {
+                          if (isMulti) {
+                            const cur = Array.isArray(answers[qId]) ? answers[qId] : [];
+                            handleAnswer(qId, isSelected ? cur.filter(x => x !== opt) : [...cur, opt]);
+                          } else {
+                            handleAnswer(qId, opt);
+                          }
+                        }}
+                          className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center gap-3 md:gap-4 group active:scale-[0.99] ${
+                            isSelected 
+                              ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/5' 
+                              : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
+                          }`}>
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${isMulti ? 'md' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
+                            isSelected ? 'bg-primary-500 border-primary-500 scale-105' : 'border-gray-300 dark:border-gray-700'
+                          }`}>
+                            {isSelected && (
+                              isMulti 
+                                ? <Check className="w-3 md:w-3.5 h-3 md:h-3.5 text-white font-black" />
+                                : <div className="w-2 md:w-2.5 h-2 md:h-2.5 bg-white rounded-full shadow-inner" />
+                            )}
+                          </div>
+                          <span className="flex-1 text-sm md:text-base font-bold">{opt}</span>
+                        </button>
+                      );
+                    })}
                   {(questionObj?.type === 'short-answer' || questionObj?.type === 'fill-blank') && (
                     <div className="pt-2">
                       <input className={`input text-lg py-4 px-6 transition-all border-2 rounded-2xl ${
