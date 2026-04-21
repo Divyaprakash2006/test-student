@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { History as HistoryIcon, Clock, Award, Eye, ChevronRight, BarChart3 } from 'lucide-react';
+import { History as HistoryIcon, Clock, Award, Eye, ChevronRight, BarChart3, Trash2, AlertTriangle } from 'lucide-react';
 import api from '../api';
 
 export default function History() {
@@ -10,8 +10,11 @@ export default function History() {
   const isDark = theme === 'dark';
   const [loading, setLoading] = useState(true);
   const [groupedTests, setGroupedTests] = useState([]);
+  const [clearing, setClearing] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  useEffect(() => {
+  const fetchHistory = () => {
+    setLoading(true);
     api.get('/exam/result/all')
       .then(({ data }) => {
         const results = data.results || [];
@@ -40,7 +43,23 @@ export default function History() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchHistory();
   }, []);
+
+  const clearHistory = async () => {
+    setClearing(true);
+    try {
+      await api.delete('/exam/result/all');
+      setGroupedTests([]);
+      setShowConfirm(false);
+    } catch (err) {
+      alert('Failed to clear history: ' + (err.response?.data?.message || err.message));
+    }
+    setClearing(false);
+  };
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center">
@@ -53,15 +72,51 @@ export default function History() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex items-center gap-4 px-2">
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all ${isDark ? 'bg-gray-900 border-gray-800 shadow-none' : 'bg-white border-gray-100 shadow-xl'}`}>
-          <HistoryIcon className="w-7 h-7 text-primary-500" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-2">
+        <div className="flex items-center gap-4">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all ${isDark ? 'bg-gray-900 border-gray-800 shadow-none' : 'bg-white border-gray-100 shadow-xl'}`}>
+            <HistoryIcon className="w-7 h-7 text-primary-500" />
+          </div>
+          <div>
+            <h1 className={`text-3xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Examination History</h1>
+            <p className={`text-xs font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Your performance track record</p>
+          </div>
         </div>
-        <div>
-          <h1 className={`text-3xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Examination History</h1>
-          <p className={`text-xs font-bold uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Your performance track record</p>
-        </div>
+        
+        {groupedTests.length > 0 && (
+          <button 
+            onClick={() => setShowConfirm(true)}
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 transition-all font-bold uppercase tracking-widest text-[10px] active:scale-95 group shadow-lg shadow-red-500/5 hover:shadow-red-500/20"
+          >
+            <Trash2 className="w-4 h-4 transition-transform group-hover:rotate-12" />
+            Clear All History
+          </button>
+        )}
       </div>
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className={`card max-w-sm w-full p-8 shadow-2xl transition-all scale-in-center ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'}`}>
+            <div className="w-16 h-16 rounded-3xl bg-red-500/10 flex items-center justify-center mx-auto mb-6">
+              <AlertTriangle className="w-8 h-8 text-red-500" />
+            </div>
+            <div className="text-center mb-8">
+              <h2 className={`text-2xl font-black mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>Wipe History?</h2>
+              <p className={`text-sm font-medium ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                This will permanently delete all your exam results and reset your attempt counts. This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setShowConfirm(false)} disabled={clearing} className="btn-secondary flex-1">
+                Cancel
+              </button>
+              <button onClick={clearHistory} disabled={clearing} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-xl transition-all shadow-lg shadow-red-600/20 active:scale-95 text-sm uppercase tracking-widest">
+                {clearing ? 'Clearing...' : 'Clear All'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {groupedTests.length === 0 ? (
         <div className={`card p-16 text-center border-dashed border-2 ${isDark ? 'border-gray-800' : 'border-gray-200'}`}>

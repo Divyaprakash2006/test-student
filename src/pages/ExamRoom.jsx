@@ -78,6 +78,7 @@ export default function ExamRoom() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [exitCount, setExitCount] = useState(0);
   const [showPalette, setShowPalette] = useState(false);
+  const [shuffledOptionsMap, setShuffledOptionsMap] = useState({});
 
   const enterFullScreen = () => {
     const el = document.documentElement;
@@ -130,7 +131,20 @@ export default function ExamRoom() {
         ]);
         setSession(s.data.session);
         setTest(t.data.test);
-        setQuestions(s.data.session.shuffledQuestions || t.data.test.questions || []);
+        const qs = s.data.session.shuffledQuestions || t.data.test.questions || [];
+        setQuestions(qs);
+        
+        // Initialize Shuffled Options Map
+        const fullQs = t.data.test.questions || [];
+        const newShuffledMap = {};
+        fullQs.forEach(question => {
+          if ((question.type === 'mcq-single' || question.type === 'mcq-multi') && question.shuffleOptions && question.options) {
+            const shuffled = [...question.options].sort(() => Math.random() - 0.5);
+            newShuffledMap[question._id] = shuffled;
+          }
+        });
+        setShuffledOptionsMap(newShuffledMap);
+
         // Restore answers
         const savedAnswers = {};
         const savedFlagged = {};
@@ -343,7 +357,7 @@ export default function ExamRoom() {
                       </div>
                     </button>
                   ))}
-                  {(questionObj?.type === 'mcq-single' || questionObj?.type === 'mcq-multi') && (questionObj?.options || []).map((opt, oi) => {
+                  {(questionObj?.type === 'mcq-single' || questionObj?.type === 'mcq-multi') && (shuffledOptionsMap[qId] || questionObj?.options || []).map((opt, oi) => {
                     const isSelected = questionObj?.type === 'mcq-multi'
                       ? (Array.isArray(answers[qId]) ? answers[qId] : []).includes(opt)
                       : answers[qId] === opt;
