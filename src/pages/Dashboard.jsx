@@ -31,7 +31,7 @@ function StatCard({ label, count, icon: Icon, color, bg, isDark }) {
 function TestTable({ tests, type, title, onStart, navigate, isDark }) {
   if (tests.length === 0) return null;
 
-  const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Flexible';
+  const fmtDate = (d) => d ? new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Flexible';
   
   return (
     <div className="space-y-4 md:space-y-6">
@@ -86,12 +86,15 @@ function TestTable({ tests, type, title, onStart, navigate, isDark }) {
                </div>
 
                <div className="space-y-3 mb-8">
-                  <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 font-bold">
-                    <Calendar className="w-4 h-4 text-primary-400" />
-                    {fmtDate(test.scheduledDate)}
+                  <div className="flex items-start gap-3 text-xs text-gray-500 dark:text-gray-400 font-bold">
+                    <Calendar className="w-4 h-4 text-primary-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[10px] uppercase opacity-50 mb-0.5">Availability Period</p>
+                      <p>{fmtDate(test.scheduledDate)} <span className="opacity-30 mx-1">/</span> {test.expiryDate ? fmtDate(test.expiryDate) : 'No Deadline'}</p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 font-bold">
-                    <Clock className="w-4 h-4 text-primary-400" />
+                    <Clock className="w-4 h-4 text-primary-400 shrink-0" />
                     {test.duration} Minutes
                   </div>
                </div>
