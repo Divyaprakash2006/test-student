@@ -11,32 +11,34 @@ const TEMPLATES = {
   cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    cout << "Hello World" << endl;\n    return 0;\n}`
 };
 
-function Timer({ startTime, duration, scheduledDate, onExpire }) {
+function Timer({ startTime, duration, expiryDate, onExpire }) {
   const [left, setLeft] = useState(null);
   const expiredRef = useRef(false);
 
   useEffect(() => {
-    // Session-based end time
+    // Session-based end time (absolute full duration for this specific session)
     const sessionEndTime = new Date(startTime).getTime() + duration * 60 * 1000;
     
-    // Hard scheduled end time (if available)
-    let hardEndTime = sessionEndTime;
-    if (scheduledDate) {
-      hardEndTime = new Date(scheduledDate).getTime() + duration * 60 * 1000;
+    // Absolute hard deadline (Test Expiry) if available
+    let endTime = sessionEndTime;
+    if (expiryDate) {
+      const expTime = new Date(expiryDate).getTime();
+      // Use the earlier of session duration or test expiry
+      endTime = Math.min(sessionEndTime, expTime);
     }
-
-    // Timer expires at the earlier of the two
-    const endTime = Math.min(sessionEndTime, hardEndTime);
 
     const tick = () => {
       const rem = Math.max(0, Math.round((endTime - Date.now()) / 1000));
       setLeft(rem);
-      if (rem === 0 && !expiredRef.current) { expiredRef.current = true; onExpire(); }
+      if (rem === 0 && !expiredRef.current) { 
+        expiredRef.current = true; 
+        onExpire(); 
+      }
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [startTime, duration, scheduledDate, onExpire]);
+  }, [startTime, duration, expiryDate, onExpire]);
 
   if (left === null) return null;
   const m = Math.floor(left / 60), s = left % 60;
@@ -254,7 +256,7 @@ export default function ExamRoom() {
           </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
-          <Timer startTime={session?.startTime} duration={test?.duration || 30} scheduledDate={test?.scheduledDate} onExpire={onExpire} />
+          <Timer startTime={session?.startTime} duration={test?.duration || 30} expiryDate={test?.expiryDate} onExpire={onExpire} />
           <button onClick={() => setShowConfirm(true)} className="hidden xs:block btn-primary py-2 px-3 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-primary-600/20 transition-transform active:scale-95" disabled={submitting}>
             {submitting ? '...' : 'Submit'}
           </button>
