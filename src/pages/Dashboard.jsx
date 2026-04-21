@@ -91,22 +91,47 @@ function TestTable({ tests, type, title, onStart, navigate, isDark }) {
                   </div>
                </div>
 
-               <div className={`pt-6 border-t ${isDark ? 'border-gray-800/50' : 'border-gray-100'}`}>
+               <div className={`pt-6 border-t ${isDark ? 'border-gray-800/50' : 'border-gray-100'} flex flex-col gap-3`}>
                   {isCompleted ? (
                     <button onClick={() => navigate(`/results/${test._id}`)}
                       className={`w-full h-12 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${isDark ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>
                       <Eye className="w-4 h-4" /> View Results
                     </button>
                   ) : (
-                    <button onClick={() => !isLocked && onStart(test._id)} disabled={isLocked}
-                      className={`w-full h-12 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl ${
-                        isLocked 
-                          ? (isDark ? 'bg-gray-800/50 text-gray-500 border border-gray-800' : 'bg-gray-50 text-gray-400 border border-gray-100')
-                          : 'bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white shadow-primary-600/20 active:scale-[0.98]'
-                      }`}>
-                      {isLocked ? <AlertCircle className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-                      {type === 'ongoing' ? 'Continue Test' : type === 'upcoming' ? 'Test Locked' : 'Test Expired'}
-                    </button>
+                    <>
+                      {test.attempts > 0 && (
+                        <div className="space-y-2 mb-2">
+                           <p className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest px-2">Attempt History</p>
+                           <div className={`max-h-24 overflow-y-auto rounded-xl border p-2 space-y-2 ${isDark ? 'border-gray-800 bg-gray-900/20' : 'border-gray-100 bg-gray-50/30'}`}>
+                             {test.results.map((res, ri) => (
+                               <div key={ri} className="flex items-center justify-between gap-4 group/res">
+                                 <div className="flex flex-col">
+                                   <span className={`text-[10px] font-bold ${isDark ? 'text-gray-300' : 'text-slate-700'}`}>Attempt {res.attemptNumber || (test.attempts - ri)}</span>
+                                   <span className="text-[8px] text-gray-400">{new Date(res.createdAt).toLocaleDateString()}</span>
+                                 </div>
+                                 <div className="flex items-center gap-3">
+                                   <span className={`text-[10px] font-black ${res.passed ? 'text-emerald-500' : 'text-red-500'}`}>{res.percentage}%</span>
+                                   <button onClick={() => navigate(`/results/${test._id}`)} className="p-1 hover:bg-primary-500/10 rounded transition-colors">
+                                     <Eye className="w-3 h-3 text-primary-400" />
+                                   </button>
+                                 </div>
+                               </div>
+                             ))}
+                           </div>
+                        </div>
+                      )}
+                      <button onClick={() => !isLocked && onStart(test._id)} disabled={isLocked}
+                        className={`w-full h-12 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 shadow-xl ${
+                          isLocked 
+                            ? (isDark ? 'bg-gray-800/50 text-gray-500 border border-gray-800' : 'bg-gray-50 text-gray-400 border border-gray-100')
+                            : 'bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white shadow-primary-600/20 active:scale-[0.98]'
+                        }`}>
+                        {isLocked ? <AlertCircle className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                        {type === 'ongoing' 
+                          ? (test.attempts > 0 ? `Take Test Again` : 'Start Test') 
+                          : type === 'upcoming' ? 'Test Locked' : 'Test Expired'}
+                      </button>
+                    </>
                   )}
                </div>
             </div>
@@ -147,29 +172,50 @@ export default function Dashboard() {
     }
   };
 
-  const completedIds = new Set(results.map(r => r.test?._id || r.test));
-  const now = new Date();
+  const resultsMap = {};
+  results.forEach(r => {
+    const tid = r.test?._id || r.test;
+    if (!resultsMap[tid]) resultsMap[tid] = [];
+    resultsMap[tid].push(r);
+  });
 
+  const now = new Date();
   const upcoming = [];
   const ongoing = [];
   const missed = [];
+  const completedList = [];
 
   myTests.forEach(t => {
-    if (completedIds.has(t._id)) return;
+    const tResults = resultsMap[t._id] || [];
+    const attempts = tResults.length;
     
     const sched = t.scheduledDate ? new Date(t.scheduledDate) : null;
-    const deadline = sched ? new Date(sched.getTime() + (t.duration || 60) * 60 * 1000) : null;
+    const expiry = t.expiryDate ? new Date(t.expiryDate) : (sched ? new Date(sched.getTime() + (t.duration || 60) * 60 * 1000) : null);
 
-    if (!sched || sched > now) {
-      upcoming.push(t);
-    } else if (now < deadline) {
-      ongoing.push(t);
+    const isExpired = expiry && now >= expiry;
+    const isStarted = !sched || now >= sched;
+
+    const formattedTest = { ...t, attempts, results: tResults.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) };
+
+    if (isExpired) {
+      if (attempts > 0) {
+        // Expired but has some results
+        const latest = formattedTest.results[0];
+        completedList.push({ ...formattedTest, passed: latest.passed, percentage: latest.percentage, expired: true });
+      } else {
+        // Expired and no results
+        missed.push(formattedTest);
+      }
+    } else if (!isStarted) {
+      // Not started yet
+      upcoming.push(formattedTest);
     } else {
-      missed.push(t);
+      // Live window (Unlimited attempts)
+      ongoing.push(formattedTest);
     }
   });
 
-  const completed = results.map(r => ({ ...(r.test || {}), passed: r.passed, percentage: r.percentage, _id: r.test?._id || r.test })).filter(Boolean);
+  const completed = completedList;
 
   const avgScore = results.length > 0 ? Math.round(results.reduce((acc, r) => acc + (r.percentage || 0), 0) / results.length) : 0;
   const passRate = results.length > 0 ? Math.round((results.filter(r => r.passed).length / results.length) * 100) : 0;

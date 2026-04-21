@@ -11,13 +11,17 @@ export default function Results() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [result, setResult] = useState(null);
+  const [results, setResults] = useState([]);
+  const [selectedResultIndex, setSelectedResultIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
     api.get(`/exam/result/${testId}`)
-      .then(({ data }) => setResult(data.result))
+      .then(({ data }) => {
+        setResults(data.results || [data.result]);
+        setSelectedResultIndex(0);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [testId]);
@@ -31,7 +35,7 @@ export default function Results() {
     </div>
   );
 
-  if (!result) return (
+  if (!results || results.length === 0) return (
     <div className={`min-h-[60vh] flex items-center justify-center`}>
       <div className={`card text-center p-10 border transition-colors ${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100 shadow-xl'}`}>
         <p className={`${isDark ? 'text-gray-400' : 'text-slate-500'}`}>No results found for this selection</p>
@@ -39,6 +43,8 @@ export default function Results() {
       </div>
     </div>
   );
+
+  const result = results[selectedResultIndex];
 
   const timeFmt = (s) => s ? `${Math.floor(s / 60)}m ${s % 60}s` : '—';
 
@@ -54,7 +60,28 @@ export default function Results() {
             <Award className="w-12 h-12 text-primary-500" />
           </div>
           <h1 className={`text-3xl md:text-5xl font-black mb-2 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>{result.test?.title}</h1>
-          <p className="text-primary-500 font-black uppercase tracking-[0.3em] text-[10px] mb-10">{result.test?.subject}</p>
+          <p className="text-primary-500 font-black uppercase tracking-[0.3em] text-[10px] mb-6">{result.test?.subject}</p>
+
+          {results.length > 1 && (
+            <div className="mb-10">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 mb-4">Submission History</p>
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {results.map((r, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedResultIndex(i)}
+                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                      selectedResultIndex === i
+                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30 scale-105'
+                        : isDark ? 'bg-gray-800 text-gray-500 hover:bg-gray-700' : 'bg-gray-50 text-slate-400 hover:bg-gray-100'
+                    }`}
+                  >
+                    Attempt {r.attemptNumber || results.length - i}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 py-6 md:py-10 border-y transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
             <div className="space-y-1">
