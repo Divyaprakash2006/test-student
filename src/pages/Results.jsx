@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Award, CheckCircle, XCircle, Clock, BarChart3, ChevronDown, ChevronUp, Home } from 'lucide-react';
+import { Award, CheckCircle, XCircle, Clock, BarChart3, ChevronDown, ChevronUp, Home, Play } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api';
 
@@ -217,9 +217,36 @@ export default function Results() {
         </div>
       )}
 
-      <div className="pt-8">
+      <div className="pt-8 flex flex-col md:flex-row gap-4">
+        {(() => {
+          const t = result.test;
+          if (!t) return null;
+          
+          const now = new Date();
+          const sched = t.scheduledDate ? new Date(t.scheduledDate) : null;
+          const expiry = t.expiryDate ? new Date(t.expiryDate) : (sched ? new Date(sched.getTime() + (t.duration || 60) * 60 * 1000) : null);
+          const isLive = (!sched || now >= sched) && (!expiry || now < expiry);
+          const hasAttemptsLeft = t.unlimitedAttempts || results.length < (t.maxAttempts || 1);
+          
+          if (!isLive || !hasAttemptsLeft) return null;
+
+          return (
+            <button onClick={async () => {
+              try {
+                const { data } = await api.post(`/exam/start/${testId}`);
+                navigate(`/exam/${testId}/${data.session._id}`);
+              } catch (err) {
+                alert(err.response?.data?.message || 'Could not start test');
+              }
+            }} 
+              className="flex-1 h-16 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest transition-all transform active:scale-[0.98] bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white shadow-2xl shadow-primary-500/20">
+              <Play className="w-6 h-6 fill-current" /> Retake Examination
+            </button>
+          );
+        })()}
+        
         <button onClick={() => navigate('/')} 
-          className={`w-full h-16 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all transform active:scale-[0.98] border shadow-2xl ${
+          className={`flex-1 h-16 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all transform active:scale-[0.98] border shadow-2xl ${
             isDark ? 'bg-gray-900 border-gray-800 text-gray-300 hover:bg-gray-800 shadow-black/40' : 'bg-white border-gray-100 text-slate-700 hover:bg-slate-50 shadow-slate-200/50'
           }`}>
           <Home className="w-6 h-6 text-primary-500" /> Return to My Overview

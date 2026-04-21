@@ -69,6 +69,11 @@ function TestTable({ tests, type, title, onStart, navigate, isDark }) {
                       {test.passed ? `Score: ${test.percentage}%` : `Fail: ${test.percentage}%`}
                     </span>
                   )}
+                  {type === 'ongoing' && !test.unlimitedAttempts && (
+                    <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider bg-primary-500/10 text-primary-600 border border-primary-500/20`}>
+                      Attempts: {test.attempts}/{test.maxAttempts || 1}
+                    </span>
+                  )}
                </div>
 
                <div className="mb-8">
@@ -210,8 +215,18 @@ export default function Dashboard() {
       // Not started yet
       upcoming.push(formattedTest);
     } else {
-      // Live window (Unlimited attempts)
-      ongoing.push(formattedTest);
+      // Live window
+      const hasAttemptsLeft = t.unlimitedAttempts || attempts < (t.maxAttempts || 1);
+      if (hasAttemptsLeft) {
+        ongoing.push(formattedTest);
+      } else if (attempts > 0) {
+        // Limit reached but result exists
+        const latest = formattedTest.results[0];
+        completedList.push({ ...formattedTest, passed: latest.passed, percentage: latest.percentage });
+      } else {
+        // This case shouldn't happen but for safety
+        ongoing.push(formattedTest);
+      }
     }
   });
 
