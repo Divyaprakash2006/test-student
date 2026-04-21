@@ -386,7 +386,7 @@ export default function ExamRoom() {
                               ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/5' 
                               : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
                           }`}>
-                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${isMulti ? 'md' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${isMulti ? 'sm' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
                             isSelected ? 'bg-primary-500 border-primary-500 scale-105' : 'border-gray-300 dark:border-gray-700'
                           }`}>
                             {isSelected && (
