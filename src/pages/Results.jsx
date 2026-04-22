@@ -45,6 +45,7 @@ export default function Results() {
   );
 
   const result = results[selectedResultIndex];
+  const isGradeMode = result?.test?.gradingMode === 'grade-point';
 
   const timeFmt = (s) => s ? `${Math.floor(s / 60)}m ${s % 60}s` : '—';
   const markFmt = (value) => {
@@ -90,26 +91,17 @@ export default function Results() {
           <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 py-6 md:py-10 border-y transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
             <div className="space-y-1">
               <p className={`text-4xl md:text-5xl font-black ${isDark ? 'text-primary-400' : 'text-primary-600'}`}>{result.percentage}%</p>
-              <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Final Accuracy</p>
+              <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Percentage</p>
             </div>
             <div className={`space-y-1 md:border-x transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
-              <p className={`text-3xl md:text-4xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{markFmt(result.score)}/{markFmt(result.totalMarks)}</p>
-              <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Total Marks</p>
+              <p className={`text-3xl md:text-4xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                {isGradeMode ? markFmt(result.gradePoint) : `${markFmt(result.score)}/${markFmt(result.totalMarks)}`}
+              </p>
+              <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>{isGradeMode ? 'Grade Point' : 'Total Marks'}</p>
             </div>
             <div className="space-y-1">
               <p className={`text-3xl md:text-4xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{timeFmt(result.timeTaken)}</p>
               <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Time Spent</p>
-            </div>
-          </div>
-
-          <div className="mt-10 flex items-center justify-center">
-            <div className={`text-xl font-black px-10 py-3 rounded-2xl shadow-xl flex items-center gap-3 transition-colors ${
-              result.passed 
-                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-emerald-500/10' 
-                : 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 shadow-red-500/10'
-            }`}>
-              {result.passed ? <CheckCircle className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
-              {result.passed ? 'PASSED' : 'FAILED'}
             </div>
           </div>
 
