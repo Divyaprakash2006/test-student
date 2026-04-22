@@ -4,6 +4,43 @@ import { ArrowLeft, CheckCircle2, XCircle, CircleHelp } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import api from '../api';
 
+function renderAnswer(value) {
+  if (value === undefined || value === null || value === '') {
+    return <p className="text-sm font-semibold opacity-70">Not answered</p>;
+  }
+
+  if (Array.isArray(value)) {
+    if (!value.length) return <p className="text-sm font-semibold opacity-70">Not answered</p>;
+    return (
+      <ul className="list-disc pl-5 space-y-1 text-sm font-semibold">
+        {value.map((item, idx) => (
+          <li key={idx} className="whitespace-pre-wrap">{String(item)}</li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (typeof value === 'object') {
+    return (
+      <pre className="text-xs whitespace-pre-wrap rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-black/30 p-3 overflow-x-auto">
+        {JSON.stringify(value, null, 2)}
+      </pre>
+    );
+  }
+
+  const text = String(value).trim();
+  if (!text) return <p className="text-sm font-semibold opacity-70">Not answered</p>;
+  if (text.includes('\n')) {
+    return (
+      <pre className="text-sm font-semibold whitespace-pre-wrap rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-black/30 p-3 overflow-x-auto">
+        {text}
+      </pre>
+    );
+  }
+
+  return <p className="text-sm font-semibold whitespace-pre-wrap">{text}</p>;
+}
+
 function AnswerBlock({ title, value, isCorrectBlock = false, isWrongBlock = false }) {
   const classes = isCorrectBlock
     ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300'
@@ -26,18 +63,10 @@ function AnswerBlock({ title, value, isCorrectBlock = false, isWrongBlock = fals
           </pre>
         </div>
       ) : (
-        <p className="text-sm font-semibold whitespace-pre-wrap">{formatAnswer(value)}</p>
+        renderAnswer(value)
       )}
     </div>
   );
-}
-
-function formatAnswer(value) {
-  if (value === undefined || value === null || value === '') return 'Not answered';
-  if (Array.isArray(value)) return value.length ? value.join(', ') : 'Not answered';
-  if (typeof value === 'object') return JSON.stringify(value);
-  const text = String(value).trim();
-  return text || 'Not answered';
 }
 
 export default function ResultReview() {
@@ -132,7 +161,7 @@ export default function ResultReview() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <AnswerBlock title="Your Response" value={item.studentAnswer} isWrongBlock={!isCorrect} />
                 <AnswerBlock title="Correct Answer" value={item.correctAnswer} isCorrectBlock />
               </div>

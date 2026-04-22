@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
-import { History as HistoryIcon, Clock, Award, Eye, ChevronRight, BarChart3, Trash2, AlertTriangle, FileText } from 'lucide-react';
+import { History as HistoryIcon, Clock, Award, Eye, BarChart3, Trash2, AlertTriangle, FileText } from 'lucide-react';
 import api from '../api';
 
 export default function History() {
@@ -175,13 +175,6 @@ export default function History() {
                         <FileText className="w-4 h-4" /> Review
                       </button>
 
-                      <button
-                        onClick={() => navigate(`/results/${t?._id || latest.test}`)}
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isDark ? 'bg-gray-800 text-gray-300 hover:bg-primary-600 hover:text-white' : 'bg-gray-50 text-slate-400 hover:bg-primary-600 hover:text-white shadow-inner'}`}
-                        title="Open Result"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
                     </div>
                   </div>
                 </div>
