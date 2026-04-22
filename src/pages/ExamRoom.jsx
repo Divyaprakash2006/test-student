@@ -252,6 +252,20 @@ export default function ExamRoom() {
   }).length;
   const flaggedCount = Object.keys(flagged).filter(k => flagged[k]).length;
 
+  const getAnswerPreview = (answer) => {
+    if (answer === undefined || answer === null || answer === '') return 'Not answered';
+    if (Array.isArray(answer)) return answer.length ? answer.join(', ') : 'Not answered';
+    if (typeof answer === 'object' && answer.code !== undefined) {
+      const lang = (answer.language || 'code').toUpperCase();
+      const code = String(answer.code || '').trim();
+      if (!code) return 'Not answered';
+      const firstLine = code.split('\n').find(Boolean) || '';
+      return `${lang}: ${firstLine.substring(0, 80)}${firstLine.length > 80 ? '...' : ''}`;
+    }
+    const text = String(answer).trim();
+    return text ? `${text.substring(0, 100)}${text.length > 100 ? '...' : ''}` : 'Not answered';
+  };
+
   return (
     <div className={`h-screen flex flex-col transition-colors overflow-hidden ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
       <style>{`
@@ -708,6 +722,35 @@ export default function ExamRoom() {
                     >
                       {i + 1}
                     </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Saved Answers</p>
+              <div className="max-h-44 overflow-y-auto pr-1 space-y-2">
+                {questions.map((question, i) => {
+                  const id = question?._id || question;
+                  const ans = answers[id];
+                  const preview = getAnswerPreview(ans);
+                  const attended = preview !== 'Not answered';
+                  const qObj = Array.isArray(test?.questions) ? test.questions.find(x => (x._id || x) === id) : null;
+                  return (
+                    <div
+                      key={`saved-${id || i}`}
+                      className={`rounded-xl border p-2.5 text-left ${attended ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-gray-700 bg-gray-800/40'}`}
+                    >
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                        Q{i + 1}
+                      </p>
+                      <p className="text-xs text-gray-300 font-medium leading-relaxed">
+                        {qObj?.text ? `${qObj.text.substring(0, 70)}${qObj.text.length > 70 ? '...' : ''}` : 'Question'}
+                      </p>
+                      <p className={`text-[11px] mt-1.5 ${attended ? 'text-emerald-300' : 'text-gray-500'}`}>
+                        {preview}
+                      </p>
+                    </div>
                   );
                 })}
               </div>
