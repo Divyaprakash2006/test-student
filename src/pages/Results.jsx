@@ -52,6 +52,10 @@ export default function Results() {
     const num = Number(value);
     return Number.isFinite(num) ? num.toFixed(1) : '0.0';
   };
+  const percentFmt = (value) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num.toFixed(1) : '0.0';
+  };
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -90,7 +94,7 @@ export default function Results() {
 
           <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 py-6 md:py-10 border-y transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
             <div className="space-y-1">
-              <p className={`text-4xl md:text-5xl font-black ${isDark ? 'text-primary-400' : 'text-primary-600'}`}>{result.percentage}%</p>
+              <p className={`text-4xl md:text-5xl font-black ${isDark ? 'text-primary-400' : 'text-primary-600'}`}>{percentFmt(result.percentage)}%</p>
               <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Percentage</p>
             </div>
             <div className={`space-y-1 md:border-x transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
