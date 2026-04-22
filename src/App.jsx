@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ExamRoom from './pages/ExamRoom';
 import Results from './pages/Results';
+import ResultReview from './pages/ResultReview';
 import Profile from './pages/Profile';
 import Calendar from './pages/Calendar';
 import History from './pages/History';
@@ -27,6 +28,7 @@ export default function App() {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/results/:testId" element={<Results />} />
+                <Route path="/results/:testId/:resultId/review" element={<ResultReview />} />
                 <Route path="/profile" element={<Profile />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />

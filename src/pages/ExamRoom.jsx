@@ -208,9 +208,20 @@ export default function ExamRoom() {
   const submit = async (auto = false) => {
     setSubmitting(true);
     try {
+      const persistTasks = questions.map((question) => {
+        const id = question?._id || question;
+        return saveAnswer(id, answers[id], flagged[id]);
+      });
+      await Promise.allSettled(persistTasks);
+
       const { data } = await api.post(`/exam/session/${sessionId}/submit`, { auto });
       releaseFullScreen();
-      navigate(`/results/${testId}`);
+      const submittedResultId = data?.result?._id;
+      if (submittedResultId) {
+        navigate(`/results/${testId}/${submittedResultId}/review`);
+      } else {
+        navigate(`/results/${testId}`);
+      }
     } catch (e) { setError('Submission failed. Please try again.'); setSubmitting(false); }
   };
 

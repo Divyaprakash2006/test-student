@@ -127,6 +127,15 @@ export default function Results() {
       </div>
 
       <div className="pt-6 flex flex-col md:flex-row gap-3">
+        <button
+          onClick={() => navigate(`/results/${testId}/${result._id}/review`)}
+          className={`flex-1 h-13 min-h-[52px] rounded-xl flex items-center justify-center gap-2.5 font-semibold text-sm transition-all transform active:scale-[0.98] border shadow-xl px-5 ${
+            isDark ? 'bg-gray-900 border-gray-800 text-gray-300 hover:bg-gray-800 shadow-black/40' : 'bg-white border-gray-100 text-slate-700 hover:bg-slate-50 shadow-slate-200/50'
+          }`}
+        >
+          <Award className="w-5 h-5 text-primary-500" /> Question Review
+        </button>
+
         {(() => {
           const t = result.test;
           if (!t) return null;

@@ -36,13 +36,15 @@ export function NotificationProvider({ children }) {
     fetchNotifications();
 
     // Socket connection
-    const socketUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-      ? '/' 
-      : 'https://test-backend-8l27.onrender.com';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://test-backend-8l27.onrender.com';
     
     const newSocket = io(socketUrl, {
+      path: '/socket.io',
       transports: ['polling', 'websocket'],
-      upgrade: true
+      upgrade: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
     setSocket(newSocket);
 
