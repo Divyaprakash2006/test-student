@@ -69,6 +69,7 @@ export default function ExamRoom() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [finalSubmitStep, setFinalSubmitStep] = useState(false);
   const [error, setError] = useState('');
   const [runResults, setRunResults] = useState(null);
   const [running, setRunning] = useState(false);
@@ -215,6 +216,11 @@ export default function ExamRoom() {
 
   const onExpire = useCallback(() => submit(true), [sessionId]);
 
+  const openSubmitReview = () => {
+    setFinalSubmitStep(false);
+    setShowConfirm(true);
+  };
+
   if (loading) return (
     <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
       <div className="text-center">
@@ -271,8 +277,8 @@ export default function ExamRoom() {
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <Timer startTime={session?.startTime} duration={test?.duration || 30} expiryDate={test?.expiryDate} onExpire={onExpire} />
-          <button onClick={() => setShowConfirm(true)} className="hidden xs:block btn-primary py-2 px-3 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-primary-600/20 transition-transform active:scale-95" disabled={submitting}>
-            {submitting ? '...' : 'Submit'}
+          <button onClick={openSubmitReview} className="hidden xs:block btn-primary py-2 px-3 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-primary-600/20 transition-transform active:scale-95" disabled={submitting}>
+            {submitting ? '...' : 'Finish'}
           </button>
           <button onClick={() => setShowPalette(true)} className="md:hidden p-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500">
             <Menu className="w-5 h-5" />
@@ -530,7 +536,7 @@ export default function ExamRoom() {
                   Next <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button onClick={() => setShowConfirm(true)} className="btn-primary py-3 px-8 md:px-10 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 border-none shadow-2xl shadow-emerald-600/30 transition-all transform active:scale-95">
+                <button onClick={openSubmitReview} className="btn-primary py-3 px-8 md:px-10 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 border-none shadow-2xl shadow-emerald-600/30 transition-all transform active:scale-95">
                   <Check className="w-4 h-4 font-black" /> Finish
                 </button>
               )}
@@ -675,23 +681,79 @@ export default function ExamRoom() {
       {/* Confirm Modal */}
       {showConfirm && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-sm shadow-2xl p-6">
-            <div className="text-center mb-5">
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md shadow-2xl p-6">
+            <div className="text-center mb-4">
               <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-3">
                 <AlertTriangle className="w-6 h-6 text-amber-400" />
               </div>
-              <h2 className="text-lg font-semibold text-white">Submit Test?</h2>
+              <h2 className="text-lg font-semibold text-white">Submission Review</h2>
               <p className="text-gray-400 text-sm mt-1">
                 You've answered <strong className="text-white">{answeredCount}</strong> of <strong className="text-white">{questions.length}</strong> questions.
                 {answeredCount < questions.length && <span className="block text-amber-400 mt-1">{questions.length - answeredCount} question(s) unanswered.</span>}
               </p>
             </div>
-            <div className="flex gap-3">
-              <button onClick={() => setShowConfirm(false)} className="btn-secondary flex-1">Review</button>
-              <button onClick={() => submit(false)} disabled={submitting} className="btn-primary flex-1">
-                {submitting ? 'Submitting...' : 'Confirm Submit'}
-              </button>
+
+            <div className="mb-5">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Question Review</p>
+              <div className="grid grid-cols-8 gap-2 max-h-36 overflow-y-auto pr-1">
+                {questions.map((question, i) => {
+                  const id = question?._id || question;
+                  const ans = answers[id];
+                  const attended = ans !== undefined && ans !== '' && !(Array.isArray(ans) && ans.length === 0) && !(typeof ans === 'object' && ans?.code !== undefined && ans.code.trim() === '');
+                  return (
+                    <button
+                      key={id || i}
+                      onClick={() => { setCurrent(i); setShowConfirm(false); }}
+                      className={`h-8 rounded-lg text-[10px] font-black border transition-all ${attended ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-red-500/10 border-red-500/40 text-red-400'}`}
+                    >
+                      {i + 1}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+
+            <div className="flex gap-3">
+              <button onClick={() => { setShowConfirm(false); setFinalSubmitStep(false); }} className="btn-secondary flex-1">Review</button>
+              {answeredCount < questions.length ? (
+                <button
+                  onClick={() => {
+                    const firstUnansweredIndex = questions.findIndex((question) => {
+                      const id = question?._id || question;
+                      const ans = answers[id];
+                      return ans === undefined || ans === '' || (Array.isArray(ans) && ans.length === 0) || (typeof ans === 'object' && ans?.code !== undefined && ans.code.trim() === '');
+                    });
+                    setShowConfirm(false);
+                    if (firstUnansweredIndex >= 0) setCurrent(firstUnansweredIndex);
+                  }}
+                  className="btn-primary flex-1"
+                >
+                  Attempt All Questions
+                </button>
+              ) : !finalSubmitStep ? (
+                <button onClick={() => setFinalSubmitStep(true)} className="btn-primary flex-1">
+                  Attempt to Submit
+                </button>
+              ) : (
+                <button onClick={() => submit(false)} disabled={submitting} className="btn-primary flex-1 bg-emerald-600 hover:bg-emerald-700 border-emerald-500">
+                  {submitting ? 'Submitting...' : 'Final Submit'}
+                </button>
+              )}
+            </div>
+            {finalSubmitStep && answeredCount === questions.length && (
+              <p className="text-[11px] text-emerald-400 text-center mt-3">All questions attended. Click Final Submit to view evaluated results.</p>
+            )}
+            {answeredCount < questions.length && (
+              <p className="text-[11px] text-amber-400 text-center mt-3">Final submit is available only after all questions are attended.</p>
+            )}
+            {finalSubmitStep && answeredCount === questions.length && (
+              <button
+                onClick={() => setFinalSubmitStep(false)}
+                className="text-[10px] font-bold text-gray-400 hover:text-gray-200 uppercase tracking-wider mt-2 w-full"
+              >
+                Back to Attempt Step
+              </button>
+            )}
           </div>
         </div>
       )}
