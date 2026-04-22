@@ -292,7 +292,7 @@ export default function ExamRoom() {
         <div className="flex items-center gap-2 md:gap-4">
           <Timer startTime={session?.startTime} duration={test?.duration || 30} expiryDate={test?.expiryDate} onExpire={onExpire} />
           <button onClick={openSubmitReview} className="hidden xs:block btn-primary py-2 px-3 md:px-6 text-[10px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-primary-600/20 transition-transform active:scale-95" disabled={submitting}>
-            {submitting ? '...' : 'Finish'}
+            {submitting ? '...' : 'Submit'}
           </button>
           <button onClick={() => setShowPalette(true)} className="md:hidden p-2 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500">
             <Menu className="w-5 h-5" />
@@ -551,7 +551,7 @@ export default function ExamRoom() {
                 </button>
               ) : (
                 <button onClick={openSubmitReview} className="btn-primary py-3 px-8 md:px-10 text-[11px] md:text-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 border-none shadow-2xl shadow-emerald-600/30 transition-all transform active:scale-95">
-                  <Check className="w-4 h-4 font-black" /> Finish
+                  <Check className="w-4 h-4 font-black" /> Submit
                 </button>
               )}
             </div>
@@ -700,7 +700,7 @@ export default function ExamRoom() {
               <div className="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto mb-3">
                 <AlertTriangle className="w-6 h-6 text-amber-400" />
               </div>
-              <h2 className="text-lg font-semibold text-white">Submission Review</h2>
+              <h2 className="text-lg font-semibold text-white">Saved Answers Review</h2>
               <p className="text-gray-400 text-sm mt-1">
                 You've answered <strong className="text-white">{answeredCount}</strong> of <strong className="text-white">{questions.length}</strong> questions.
                 {answeredCount < questions.length && <span className="block text-amber-400 mt-1">{questions.length - answeredCount} question(s) unanswered.</span>}
@@ -775,7 +775,7 @@ export default function ExamRoom() {
                 </button>
               ) : !finalSubmitStep ? (
                 <button onClick={() => setFinalSubmitStep(true)} className="btn-primary flex-1">
-                  Attempt to Submit
+                  Proceed to Final Submit
                 </button>
               ) : (
                 <button onClick={() => submit(false)} disabled={submitting} className="btn-primary flex-1 bg-emerald-600 hover:bg-emerald-700 border-emerald-500">
@@ -784,7 +784,7 @@ export default function ExamRoom() {
               )}
             </div>
             {finalSubmitStep && answeredCount === questions.length && (
-              <p className="text-[11px] text-emerald-400 text-center mt-3">All questions attended. Click Final Submit to view evaluated results.</p>
+              <p className="text-[11px] text-emerald-400 text-center mt-3">Step 2 ready. Click Final Submit to open results page (summary only).</p>
             )}
             {answeredCount < questions.length && (
               <p className="text-[11px] text-amber-400 text-center mt-3">Final submit is available only after all questions are attended.</p>
