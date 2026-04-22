@@ -21,7 +21,6 @@ function Navbar() {
         <div className="flex items-baseline gap-1">
           <span className={`font-black text-xs md:text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>Test</span>
           <span className="font-black text-xs md:text-sm bg-clip-text text-transparent bg-gradient-to-r from-cyan-500 to-emerald-400">Zen</span>
-          <span className="text-[8px] md:text-[10px] font-bold text-gray-400 ml-1 uppercase tracking-tighter">Student</span>
         </div>
       </div>
 
