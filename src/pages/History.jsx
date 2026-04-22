@@ -86,7 +86,7 @@ export default function History() {
         {groupedTests.length > 0 && (
           <button 
             onClick={() => setShowConfirm(true)}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 transition-all font-bold uppercase tracking-widest text-[10px] active:scale-95 group shadow-lg shadow-red-500/5 hover:shadow-red-500/20"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 transition-all font-bold uppercase tracking-widest text-[10px] active:scale-95 group shadow-md shadow-red-500/5 hover:shadow-red-500/20"
           >
             <Trash2 className="w-4 h-4 transition-transform group-hover:rotate-12" />
             Clear All History
@@ -131,8 +131,8 @@ export default function History() {
             const t = group.test;
             const latest = group.results[0];
             return (
-              <div key={idx} className={`glass rounded-3xl p-6 border transition-all group hover:shadow-2xl ${isDark ? 'border-gray-800 hover:border-primary-500/30' : 'border-gray-100 hover:border-primary-500/10 shadow-xl shadow-slate-200/50'}`}>
-                <div className="flex flex-col md:flex-row md:items-center gap-6">
+              <div key={idx} className={`glass rounded-2xl p-5 border transition-all group hover:shadow-xl ${isDark ? 'border-gray-800 hover:border-primary-500/30' : 'border-gray-100 hover:border-primary-500/10 shadow-lg shadow-slate-200/40'}`}>
+                <div className="flex flex-col md:flex-row md:items-center gap-5">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3 mb-3">
                       <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-slate-500'}`}>
@@ -142,7 +142,7 @@ export default function History() {
                         {group.totalAttempts} {group.totalAttempts === 1 ? 'Attempt' : 'Attempts'}
                       </span>
                     </div>
-                    <h3 className={`text-2xl font-black mb-1 group-hover:text-primary-500 transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <h3 className={`text-xl font-black mb-1 group-hover:text-primary-500 transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {t?.title || 'Unknown Test'}
                     </h3>
                     <p className={`text-xs font-bold ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>
@@ -150,17 +150,17 @@ export default function History() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-4 md:gap-8 border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-8 transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}">
-                    <div className="text-center min-w-[80px]">
-                      <p className={`text-3xl font-black ${group.bestScore >= (t?.passmark || 0) ? 'text-emerald-500' : 'text-red-500'}`}>
+                  <div className={`flex items-center gap-4 md:gap-6 border-t md:border-t-0 md:border-l pt-4 md:pt-0 md:pl-6 transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
+                    <div className="text-center min-w-[72px]">
+                      <p className={`text-2xl font-black ${group.bestScore >= (t?.passmark || 0) ? 'text-emerald-500' : 'text-red-500'}`}>
                         {group.bestScore}%
                       </p>
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Best Score</p>
                     </div>
                     
                     <button onClick={() => navigate(`/results/${t?._id || latest.test}`)} 
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isDark ? 'bg-gray-800 text-gray-300 hover:bg-primary-600 hover:text-white' : 'bg-gray-50 text-slate-400 hover:bg-primary-600 hover:text-white shadow-inner'}`}>
-                      <ChevronRight className="w-6 h-6" />
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isDark ? 'bg-gray-800 text-gray-300 hover:bg-primary-600 hover:text-white' : 'bg-gray-50 text-slate-400 hover:bg-primary-600 hover:text-white shadow-inner'}`}>
+                      <ChevronRight className="w-5 h-5" />
                     </button>
                   </div>
                 </div>

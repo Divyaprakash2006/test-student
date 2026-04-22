@@ -217,7 +217,7 @@ export default function Results() {
         </div>
       )}
 
-      <div className="pt-8 flex flex-col md:flex-row gap-4">
+      <div className="pt-6 flex flex-col md:flex-row gap-3">
         {(() => {
           const t = result.test;
           if (!t) return null;
@@ -239,17 +239,17 @@ export default function Results() {
                 alert(err.response?.data?.message || 'Could not start test');
               }
             }} 
-              className="flex-1 h-16 rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest transition-all transform active:scale-[0.98] bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white shadow-2xl shadow-primary-500/20">
-              <Play className="w-6 h-6 fill-current" /> Retake Examination
+              className="flex-1 h-13 min-h-[52px] rounded-xl flex items-center justify-center gap-2.5 font-black uppercase tracking-wider text-sm transition-all transform active:scale-[0.98] bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white shadow-xl shadow-primary-500/20 px-5">
+              <Play className="w-5 h-5 fill-current" /> Retake Examination
             </button>
           );
         })()}
         
         <button onClick={() => navigate('/')} 
-          className={`flex-1 h-16 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all transform active:scale-[0.98] border shadow-2xl ${
+          className={`flex-1 h-13 min-h-[52px] rounded-xl flex items-center justify-center gap-2.5 font-semibold text-sm transition-all transform active:scale-[0.98] border shadow-xl px-5 ${
             isDark ? 'bg-gray-900 border-gray-800 text-gray-300 hover:bg-gray-800 shadow-black/40' : 'bg-white border-gray-100 text-slate-700 hover:bg-slate-50 shadow-slate-200/50'
           }`}>
-          <Home className="w-6 h-6 text-primary-500" /> Return to My Overview
+          <Home className="w-5 h-5 text-primary-500" /> Return to My Overview
         </button>
       </div>
     </div>
