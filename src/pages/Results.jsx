@@ -47,6 +47,10 @@ export default function Results() {
   const result = results[selectedResultIndex];
 
   const timeFmt = (s) => s ? `${Math.floor(s / 60)}m ${s % 60}s` : '—';
+  const markFmt = (value) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num.toFixed(1) : '0.0';
+  };
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -89,7 +93,7 @@ export default function Results() {
               <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Final Accuracy</p>
             </div>
             <div className={`space-y-1 md:border-x transition-colors ${isDark ? 'border-gray-800' : 'border-gray-100'}`}>
-              <p className={`text-3xl md:text-4xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{result.score}/{result.totalMarks}</p>
+              <p className={`text-3xl md:text-4xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{markFmt(result.score)}/{markFmt(result.totalMarks)}</p>
               <p className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Total Marks</p>
             </div>
             <div className="space-y-1">
@@ -157,7 +161,7 @@ export default function Results() {
                         <div className="flex items-center gap-3 mb-2">
                           <span className={`text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-slate-400'}`}>Question {i + 1}</span>
                           <span className={`text-[9px] font-black px-2 py-0.5 rounded-lg transition-colors ${isDark ? 'bg-gray-800 text-gray-400' : 'bg-slate-50 text-slate-500'}`}>
-                            {qa.marksAwarded}/{qa.maxMarks} Marks
+                            {markFmt(qa.marksAwarded)}/{markFmt(qa.maxMarks)} Marks
                           </span>
                         </div>
                         <p className={`font-bold leading-relaxed mb-6 ${isDark ? 'text-white' : 'text-slate-900'}`}>{q?.text || `Problem Definition missing`}</p>
