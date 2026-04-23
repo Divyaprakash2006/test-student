@@ -392,7 +392,7 @@ export default function ExamRoom() {
                         </span>
                       )}
                     </div>
-                    <p className={`text-lg md:text-2xl font-bold leading-tight whitespace-pre-wrap ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <p className={`text-base md:text-xl font-bold leading-tight whitespace-pre-wrap ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {questionObj?.text || 'Loading...'}
                     </p>
                   </div>
@@ -410,16 +410,16 @@ export default function ExamRoom() {
                 <div className="space-y-3">
                   {questionObj?.type === 'true-false' && ['True', 'False'].map(opt => (
                     <button key={opt} onClick={() => handleAnswer(qId, opt)}
-                      className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center justify-between group active:scale-[0.99] ${
+                      className={`w-full text-left p-2.5 md:p-3 rounded-xl transition-all flex items-center justify-between group active:scale-[0.99] ${
                         answers[qId] === opt 
-                          ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-lg shadow-primary-500/5' 
-                          : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
+                          ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 shadow-sm' 
+                          : `${isDark ? 'bg-gray-800/30 text-gray-400' : 'bg-slate-50 text-slate-800 hover:bg-slate-100'}`
                       }`}>
-                      <span className="text-sm md:text-base font-bold">{opt}</span>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                      <span className="text-sm font-bold">{opt}</span>
+                      <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                         answers[qId] === opt ? 'bg-primary-500 border-primary-500 scale-110 shadow-lg shadow-primary-500/30' : 'border-gray-300 dark:border-gray-700'
                       }`}>
-                        {answers[qId] === opt && <Check className="w-3.5 h-3.5 text-white font-black" />}
+                        {answers[qId] === opt && <Check className="w-3 h-3 text-white font-black" />}
                       </div>
                     </button>
                   ))}
@@ -439,21 +439,21 @@ export default function ExamRoom() {
                             handleAnswer(qId, opt);
                           }
                         }}
-                          className={`w-full text-left p-3.5 md:p-4 rounded-2xl border-2 transition-all flex items-center gap-3 md:gap-4 group active:scale-[0.99] ${
+                          className={`w-full text-left p-2.5 md:p-3 rounded-xl transition-all flex items-center gap-3 md:gap-4 group active:scale-[0.99] ${
                             isSelected 
-                              ? 'border-primary-500 bg-primary-500/5 text-primary-600 dark:text-primary-400 shadow-xl shadow-primary-500/5' 
-                              : `${isDark ? 'border-gray-800/50 bg-gray-800/30 text-gray-400' : 'border-gray-200 bg-white text-slate-800 hover:bg-slate-50'} hover:border-primary-500/30`
+                              ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 shadow-sm' 
+                              : `${isDark ? 'bg-gray-800/30 text-gray-400' : 'bg-slate-50 text-slate-800 hover:bg-slate-100'}`
                           }`}>
-                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-${isMulti ? 'sm' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
+                          <div className={`w-4 h-4 md:w-5 md:h-5 rounded-${isMulti ? 'sm' : 'full'} border-2 flex items-center justify-center shrink-0 transition-all ${
                             isSelected ? 'bg-primary-500 border-primary-500 scale-105' : 'border-gray-300 dark:border-gray-700'
                           }`}>
                             {isSelected && (
                               isMulti 
-                                ? <Check className="w-3 md:w-3.5 h-3 md:h-3.5 text-white font-black" />
-                                : <div className="w-2 md:w-2.5 h-2 md:h-2.5 bg-white rounded-full shadow-inner" />
+                                ? <Check className="w-2.5 md:w-3 h-2.5 md:h-3 text-white font-black" />
+                                : <div className="w-1.5 md:w-2 h-1.5 md:h-2 bg-white rounded-full shadow-inner" />
                             )}
                           </div>
-                          <span className="flex-1 text-sm md:text-base font-bold">{opt}</span>
+                          <span className="flex-1 text-sm font-bold">{opt}</span>
                         </button>
                       );
                     })}
