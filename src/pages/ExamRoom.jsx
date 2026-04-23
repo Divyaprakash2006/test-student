@@ -11,6 +11,20 @@ const TEMPLATES = {
   cpp: `#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    cout << "Hello World" << endl;\n    return 0;\n}`
 };
 
+const normalizeMultiAnswer = (value) => {
+  if (Array.isArray(value)) {
+    return value.map(v => String(v || '').trim()).filter(Boolean);
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+    return trimmed.split(/[\n,;|]+/).map(v => v.trim()).filter(Boolean);
+  }
+  if (value === undefined || value === null) return [];
+  const text = String(value).trim();
+  return text ? [text] : [];
+};
+
 function Timer({ startTime, duration, expiryDate, onExpire }) {
   const [left, setLeft] = useState(null);
   const expiredRef = useRef(false);
@@ -149,9 +163,12 @@ export default function ExamRoom() {
         // Restore answers
         const savedAnswers = {};
         const savedFlagged = {};
+        const questionTypeMap = new Map(fullQs.map(question => [String(question._id), question.type]));
         (s.data.session.answers || []).forEach(a => {
-          savedAnswers[a.question] = a.answer;
-          if (a.flagged) savedFlagged[a.question] = true;
+          const questionId = String(a.question);
+          const qType = questionTypeMap.get(questionId);
+          savedAnswers[questionId] = qType === 'mcq-multi' ? normalizeMultiAnswer(a.answer) : a.answer;
+          if (a.flagged) savedFlagged[questionId] = true;
         });
         setAnswers(savedAnswers);
         setFlagged(savedFlagged);
@@ -172,6 +189,16 @@ export default function ExamRoom() {
     setAnswers(newAnswers);
     saveAnswer(qId, answer, flagged[qId]);
   };
+
+  const toggleMultiAnswer = useCallback((qId, option) => {
+    setAnswers(prev => {
+      const current = normalizeMultiAnswer(prev[qId]);
+      const isSelected = current.includes(option);
+      const next = isSelected ? current.filter(value => value !== option) : [...current, option];
+      saveAnswer(qId, next, flagged[qId]);
+      return { ...prev, [qId]: next };
+    });
+  }, [flagged, saveAnswer]);
 
   const toggleFlag = (qId) => {
     const newFlagged = { ...flagged, [qId]: !flagged[qId] };
@@ -258,6 +285,7 @@ export default function ExamRoom() {
   const answeredCount = Object.keys(answers).filter(k => {
     const ans = answers[k];
     if (!ans) return false;
+    if (Array.isArray(ans)) return ans.length > 0;
     if (typeof ans === 'object' && ans.code !== undefined) return ans.code.trim() !== '';
     return ans !== '' && ans !== undefined && ans !== null;
   }).length;
@@ -400,14 +428,13 @@ export default function ExamRoom() {
                     .filter(opt => opt && opt.trim() !== '')
                     .map((opt, oi) => {
                       const isSelected = questionObj?.type === 'mcq-multi'
-                        ? (Array.isArray(answers[qId]) ? answers[qId] : []).includes(opt)
+                        ? normalizeMultiAnswer(answers[qId]).includes(opt)
                         : answers[qId] === opt;
                       const isMulti = questionObj?.type === 'mcq-multi';
                       return (
                         <button key={oi} onClick={() => {
                           if (isMulti) {
-                            const cur = Array.isArray(answers[qId]) ? answers[qId] : [];
-                            handleAnswer(qId, isSelected ? cur.filter(x => x !== opt) : [...cur, opt]);
+                            toggleMultiAnswer(qId, opt);
                           } else {
                             handleAnswer(qId, opt);
                           }
